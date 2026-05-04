@@ -109,6 +109,7 @@ GitHub OAuth のみ。ローカルでは GitHub OAuth App を別途作成し、`
 - 明示指示なしに push・PR 作成しない
 - 勝手に `git add` しない（ステージ済みファイルのみコミット）
 - AI 生成文言（「Claude」「Generated with」「Co-Authored-By」等、署名・ヘッダー含む）を含めない
+- **`#数字` 形式を使わない**（commit メッセージ / PR 本文 / issue 本文 / リポジトリ内ドキュメント全て）。GitHub が issue/PR への自動リンクに変換するため。項目参照は `R0-2` / `R1-3` 等の形式を使う。意図的に既存 PR/issue を参照する場合のみ `#数字` を許容
 
 ### ブランチ運用
 
