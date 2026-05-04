@@ -171,7 +171,7 @@ sequenceDiagram
     participant Browser as ブラウザ
     participant API as NestJS API
     participant DB as Postgres
-    participant Worker as Go ワーカー<br/>(LISTEN 中)
+    participant Worker as Go ワーカー
     participant Sandbox as 採点コンテナ
 
     User->>Browser: 解答送信
@@ -181,40 +181,42 @@ sequenceDiagram
     note over API,DB: ① 解答受付（同一トランザクション）
     API->>DB: BEGIN
     API->>DB: INSERT submissions
-    API->>DB: INSERT jobs (state='queued')
-    API->>DB: NOTIFY new_job, jobId
+    API->>DB: INSERT jobs state=queued
+    API->>DB: NOTIFY new_job
     API->>DB: COMMIT
     end
 
-    API-->>-Browser: 202 Accepted<br/>{ submissionId, jobId }
+    API-->>-Browser: 202 Accepted (submissionId, jobId)
 
-    Browser->>Browser: TanStack Query で<br/>ポーリング開始 (1〜2 秒)
+    Browser->>Browser: TanStack Query でポーリング開始 (1〜2 秒)
 
     rect rgb(240, 255, 240)
-    note over DB,Worker: ② ジョブ取得（行ロック短時間）
+    note over DB,Worker: ② ジョブ取得（LISTEN 受信、行ロック短時間）
     DB->>Worker: NOTIFY new_job
     Worker->>DB: SELECT ... FOR UPDATE SKIP LOCKED LIMIT 1
-    Worker->>DB: UPDATE state='running', locked_by='worker-1'
+    Worker->>DB: UPDATE state=running, locked_by=worker-1
     Worker->>DB: COMMIT (行ロック解放)
     end
 
     rect rgb(255, 247, 230)
     note over Worker,Sandbox: ③ サンドボックス採点（使い捨て）
-    Worker->>+Sandbox: ContainerCreate + Start
-    Sandbox->>Sandbox: Vitest 実行<br/>(タイムアウト 5 秒)
-    Sandbox-->>Worker: ContainerLogs<br/>(stdout/stderr/exit code)
-    Worker->>-Sandbox: ContainerRemove
+    Worker->>Sandbox: ContainerCreate + Start
+    activate Sandbox
+    Sandbox->>Sandbox: Vitest 実行 (タイムアウト 5 秒)
+    Sandbox-->>Worker: ContainerLogs (stdout, stderr, exit code)
+    Worker->>Sandbox: ContainerRemove
+    deactivate Sandbox
     end
 
     rect rgb(232, 244, 255)
     note over Worker,DB: ④ 結果書き戻し
-    Worker->>DB: UPDATE jobs SET state='done', result=...
-    Worker->>DB: UPDATE submissions SET status='graded', score=...
+    Worker->>DB: UPDATE jobs SET state=done, result=...
+    Worker->>DB: UPDATE submissions SET status=graded, score=...
     end
 
     Browser->>+API: GET /submissions/:id (ポーリング)
     API->>DB: SELECT
-    DB-->>API: status='graded'
+    DB-->>API: status=graded
     API-->>-Browser: 採点結果
     Browser->>User: 結果表示
 ```
