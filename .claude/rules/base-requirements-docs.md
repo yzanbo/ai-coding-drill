@@ -1,14 +1,27 @@
+---
+paths:
+  - "docs/requirements/**/*"
+---
+
 # 要件定義書（`docs/requirements/`）の記述ルール
 
-## 1. 重複記述の禁止
+このプロジェクトでは要件定義書を **5 バケット時系列構造**（[ADR 0019](../../docs/adr/0019-requirements-as-5-buckets.md)）で運用する。本ルールはそのディレクトリ構造下の `.md` を編集するときに従う規約。
+
+> **ファイル名について**：旧構造では `docs/requirements/base/` だったため `base-requirements-docs.md` という名前になっているが、現構造（5 バケット）でも本ルールがそのまま適用される。
+
+---
+
+## 1. 重複記述の禁止（SSoT 原則）
 
 - 同じ情報を複数のファイルに重複して書かない
 - 同じ事柄を 2 箇所で説明する必要が生じた場合は、**どちらか 1 箇所を「正」とし、他方からはその箇所へリンクする**
 - 修正時に「片方だけ更新して片方が古いまま」になる事故を防ぐため、内容の単一情報源（Single Source of Truth）を徹底する
 
+---
+
 ## 2. ディレクトリ構造と守備範囲
 
-要件定義書は **時系列 × 変更頻度**で 5 つのバケットに分かれる：
+要件定義書は **時系列 × 変更頻度** で 5 つのバケットに分かれる：
 
 ```
 docs/requirements/
@@ -61,12 +74,15 @@ docs/requirements/
 |---|---|
 | `01-roadmap.md` | ビジョン・リリース計画（R0〜R9）・プロダクトバックログ（Now / Next / Later / Parked）・スプリント運用（DoR / DoD） |
 
-### `docs/adr/` — 設計判断の履歴
+### `docs/adr/` — 設計判断の履歴（参考）
 
 - 重要な技術・設計判断を **1 決定 1 ファイル、Append-only**で記録
 - 新規決定が発生したら [`docs/adr/template.md`](../../docs/adr/template.md) を元に追加する
+- 索引：[`docs/adr/README.md`](../../docs/adr/README.md)
 
-### テンプレート
+---
+
+## 3. テンプレート
 
 | 用途 | テンプレ |
 |---|---|
@@ -80,7 +96,9 @@ docs/requirements/
 
 `5-roadmap/` はファイル数が固定的（基本は `01-roadmap.md` 1 ファイル）のため専用テンプレなし。
 
-## 3. 守備範囲の使い分け（最も重複しやすい組）
+---
+
+## 4. 守備範囲の使い分け（最も重複しやすい組）
 
 ### 02-architecture と 05-runtime-stack（2-foundation 内）
 
@@ -102,7 +120,9 @@ docs/requirements/
 - **1-vision/03-user-stories.md**：ペルソナ × 状況のストーリー全体俯瞰（**追記される**が、機能ファイル並みの詳細は書かない）
 - **4-features/F-XX.md**：機能単位のユーザーストーリー + 受け入れ条件 + 画面 + API + フロー（個別機能の SSoT）
 
-## 4. リンクの貼り方
+---
+
+## 5. リンクの貼り方
 
 - 関連情報が他ファイルにある場合、該当セクションへ**アンカーリンク**で飛ばす
 - リンク先は GitHub Flavored Markdown のスラグルール（小文字化、空白はハイフン、記号は除去）に従う
@@ -111,7 +131,9 @@ docs/requirements/
   - `→ 採用フレームワーク・ライブラリの詳細は [05-runtime-stack.md: バックエンド API](./05-runtime-stack.md#バックエンド-apinestjs--typescript)`
   - `→ コンポーネントの責務は [02-architecture.md: Backend API](../2-foundation/02-architecture.md#backend-apinestjs)`
 
-## 5. 各ファイル冒頭に守備範囲を明記
+---
+
+## 6. 各ファイル冒頭に守備範囲を明記
 
 - 各 `.md` ファイルの先頭に、**自ファイルの守備範囲と、関連トピックの参照先**を引用ブロックで書く
 - 例：
@@ -121,18 +143,85 @@ docs/requirements/
 > **使うフレームワーク・ライブラリ・サービスの具体名や選定理由**は [05-runtime-stack.md](./05-runtime-stack.md) を参照。
 ```
 
-## 6. 編集時のチェック
+---
+
+## 7. 図の表現方法（Mermaid 化推奨）
+
+要件定義書では **GitHub ネイティブサポートの Mermaid 図** を積極的に使う。テキスト擬似図（ASCII アート）は読みにくく、視覚的訴求力で劣るため原則避ける。
+
+### Mermaid 化を **推奨する** ケース
+
+| 種類 | 用途 | 例 |
+|---|---|---|
+| `flowchart` | 複数分岐のフロー / アーキテクチャ全体図 / 物理配置 | [02-architecture.md: 全体構成](../../docs/requirements/2-foundation/02-architecture.md#全体構成概念図) / [03-llm-pipeline.md: 生成フロー](../../docs/requirements/2-foundation/03-llm-pipeline.md#生成フロー) |
+| `sequenceDiagram` | 時系列で actor 間のメッセージ交換 | [02-architecture.md: 1 ジョブが流れる完全な経路](../../docs/requirements/2-foundation/02-architecture.md#1-ジョブが流れる完全な経路) |
+| `erDiagram` | DB スキーマ・エンティティ関係 | [01-data-model.md: ER 図](../../docs/requirements/3-cross-cutting/01-data-model.md#er-図全体俯瞰) |
+| `stateDiagram` | 状態遷移（ジョブ state の遷移等、必要時） | — |
+
+### Mermaid 化を **しなくてよい** ケース
+
+| 種類 | 理由 |
+|---|---|
+| トレースのスパンツリー（インデント + ms 表示） | Jaeger/Tempo UI 等の業界標準テキスト表現が読みやすい |
+| 3 行程度の単純なフロー | Mermaid 化するとノイズが増える |
+| コード例・JSON 例・SQL 例 | コードブロックで十分 |
+| マイグレーション SQL の例示 | コードブロックで十分 |
+
+### Mermaid の書き方規約
+
+- **GitHub Mermaid サポート**に準拠（リポジトリ上で自動レンダリング）
+- ノードに **色分類**を付ける（`classDef`）：典型的には終端（青）/ 判定（橙）/ 処理（緑）/ 失敗（赤）等
+- 図の下に **凡例 / 読み方** を必ず添える（実線=同期 / 点線=非同期 等の判別）
+- 図の下に **設計判断ポイント表** を併記すると、視覚情報 + テキスト情報で理解度が増す
+- 流れの方向：上下なら `flowchart TB`、左右なら `flowchart LR`
+- 1 つの図に詰め込みすぎない（**1 図 1 メッセージ**）。情報が多い場合は複数図に分割
+
+### 既存の Mermaid 図参考
+
+| ファイル | 図の数 | 種類 |
+|---|---|---|
+| [02-architecture.md](../../docs/requirements/2-foundation/02-architecture.md) | 3 | flowchart × 2（論理構成 / 物理配置）+ sequenceDiagram（ジョブフロー） |
+| [03-llm-pipeline.md](../../docs/requirements/2-foundation/03-llm-pipeline.md) | 2 | flowchart × 2（生成フロー / 採点フロー） |
+| [01-data-model.md](../../docs/requirements/3-cross-cutting/01-data-model.md) | 1 | erDiagram |
+
+新規ファイル作成・既存ファイル編集時にフロー / 関係図 / 構造図 が必要になったら、**まず Mermaid で書けないか検討**する。
+
+---
+
+## 8. 編集時のチェック
 
 要件定義書を編集する際は以下を確認する：
+
+### 内容のチェック
 
 - [ ] 追記する内容が他ファイル・他バケットと重複していないか
 - [ ] 重複が発生した場合、片方を「正」として他方をリンクに置き換えたか
 - [ ] 各セクション末に必要な相互リンクが貼られているか
-- [ ] ファイルごとの守備範囲（上記）から外れた内容を書いていないか
-- [ ] 機能個別の話を 1-vision/2-foundation/3-cross-cutting に書いていないか（→ 4-features/ に書く）
+- [ ] ファイルごとの守備範囲（§2）から外れた内容を書いていないか
+- [ ] 機能個別の話を 1-vision / 2-foundation / 3-cross-cutting に書いていないか（→ 4-features/ に書く）
 - [ ] 横断方針を 4-features/ に書いていないか（→ 適切な base 系バケットに書く）
 
-## 7. 例外
+### 形式のチェック
+
+- [ ] ファイル冒頭に **守備範囲記述（quote ブロック）** があるか（§6）
+- [ ] 章番号（`# NN.`）が **ファイル名の連番**と一致しているか
+- [ ] 他ファイルへのリンクが正しい相対パスで書かれているか（GitHub レンダリングで切れない）
+- [ ] フロー / 関係図 / 構造図 を **Mermaid で書けないか** 検討したか（§7）
+- [ ] 重要な設計判断が含まれる場合、対応する **ADR が起票** されているか / 既存 ADR にリンクしているか
+
+---
+
+## 9. 例外
 
 - **概要レベルの一文の引用**（例：「Backend API は NestJS で実装」）は、そのファイルの文脈上必要なら重複可。ただし詳細説明は単一箇所に集約する
 - **概念図・全体構成図** に技術名が登場するのは可（図は概観の理解を優先）
+- **コード例として技術名を含む断片**（例：`pnpm db:migrate`）は §1 の重複禁止対象外
+
+---
+
+## 10. 関連ルール・ドキュメント
+
+- [docs/requirements/README.md](../../docs/requirements/README.md) — 5 バケット構造の全体マップ・読む順序・書く順序ガイド
+- [docs/adr/0019-requirements-as-5-buckets.md](../../docs/adr/0019-requirements-as-5-buckets.md) — 5 バケット構造の設計判断
+- [docs/adr/template.md](../../docs/adr/template.md) — ADR 作成時のテンプレ
+- 各バケット README — 各 `docs/requirements/<バケット>/README.md`
