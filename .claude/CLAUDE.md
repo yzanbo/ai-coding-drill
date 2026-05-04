@@ -101,47 +101,64 @@ GitHub OAuth のみ。ローカルでは GitHub OAuth App を別途作成し、`
 
 ## ⚠️ Git ルール
 
-**以下のルールは必ず守ること。違反は許容されない。**
+絶対遵守。違反は許容しない。
 
-### コミット・PR 作成時の禁止事項
+### 共通禁止
 
-- **コミットメッセージ・PR 本文に以下の文言を絶対に含めない：**
-  - 「Claude」「AI」「Generated with」「Co-Authored-By」など、AI 生成を示す一切の文言
-  - `🤖 Generated with [Claude Code](https://claude.com/claude-code)` のような署名
-  - `Co-Authored-By: Claude` のようなヘッダー
-- **main ブランチでの作業は禁止**（コミット・push 共に禁止。必ず feature ブランチを作成してから PR を作成する）
+- main で直接作業しない（必ず別ブランチを切る）
+- 明示指示なしに push・PR 作成しない
+- 勝手に `git add` しない（ステージ済みファイルのみコミット）
+- AI 生成文言（「Claude」「Generated with」「Co-Authored-By」等、署名・ヘッダー含む）を含めない
 
-### Push・PR 作成のルール
+### ブランチ運用
 
-- **ユーザーから明示的な指示がない限り、push・PR 作成は行わない**
+- `main` を唯一の長期ブランチとし、リリースはタグ（`v0.1.0` 等）で管理する
+- 複数領域を跨ぐ作業は **ブランチ名に詰めず commit 側で表現**（例：commit `feat(api,worker): ...`）
+- 日本語・スペース・シェル特殊文字・予約名（`main` / `master` / `HEAD`）を使わない
 
-### コミット・PR の書き方
+#### 新規ブランチの命名規則（下記パターンから 1 つ選ぶ）
 
-- コミットメッセージや PR 本文は **日本語**で記載する
-- PR 本文の見出し（Summary、Test plan 等）も日本語で記載する（例: 概要、テスト方法）
-- 「Test plan」は「テスト方法」と記載する
-- テスト方法は `- [ ]` 形式のチェックリストで記載する
-- コミット対象はステージング済みのファイルのみ
-- **勝手に `git add` しない** — ユーザーがステージしたファイルのみをコミットする
+| パターン | 用途 |
+|---|---|
+| `feature/web/<機能名>` | フロントエンドの機能開発 |
+| `feature/api/<機能名>` | バックエンドの機能開発 |
+| `feature/worker/<機能名>` | 採点ワーカーの機能開発 |
+| `feature/shared/<機能名>` | 共有パッケージ（types, prompts, config）の変更 |
+| `feature/infra/<機能名>` | インフラ（Terraform）の変更 |
+| `fix/<scope>/<内容>` | バグ修正 |
+| `refactor/<scope>/<内容>` | リファクタリング |
+| `docs/<内容>` | ドキュメント変更 |
+| `chore/<scope>/<内容>` | 依存関係更新等の雑務 |
 
-### ブランチ戦略：Trunk-based + フィーチャーブランチ
+### コミットメッセージ
 
-- `main` が唯一の長期ブランチ、本番デプロイ対象
-- 機能開発は `feature/<short-name>` で作業 → PR → main にマージ
-- リリースはタグ（`v0.1.0` 等）で管理、リリースブランチは作らない
-- `main` への直接 push は禁止
+- 日本語で記載、commitlint で機械強制（SSoT: [commitlint.config.mjs](../commitlint.config.mjs)）
+- 形式は `<type>(<scope>): <subject>` / scope 任意 / ヘッダー 100 文字以内 / 本文 1 行 200 文字以内
+- 複数領域はカンマ区切り（例：`feat(api,worker): ...`）
 
-### ブランチ命名規則
+#### type（Conventional Commits 標準、下記から 1 つ選ぶ）
 
-- `feature/web/<機能名>` — フロントエンドの機能開発
-- `feature/api/<機能名>` — バックエンドの機能開発
-- `feature/worker/<機能名>` — 採点ワーカーの機能開発
-- `feature/shared/<機能名>` — 共有パッケージ（types, prompts, config）の変更
-- `feature/infra/<機能名>` — インフラ（Terraform）の変更
-- `fix/<scope>/<内容>` — バグ修正
-- `refactor/<scope>/<内容>` — リファクタリング
-- `docs/<内容>` — ドキュメント変更
-- `chore/<scope>/<内容>` — 依存関係更新等の雑務
+`feat` / `fix` / `docs` / `refactor` / `test` / `chore` / `ci` / `build` / `perf` / `style` / `revert`
+
+#### scope（プロジェクト固有、下記から 1 つ以上選ぶ）
+
+| scope | 対応領域 |
+|---|---|
+| `web` | apps/web |
+| `api` | apps/api |
+| `worker` | apps/grading-worker |
+| `shared` | packages/shared-types, packages/prompts 等 |
+| `config` | packages/config |
+| `infra` | infra/ |
+| `docs` | docs/ |
+| `db` | Drizzle スキーマ・マイグレーション |
+| `deps` | 依存パッケージ更新 |
+
+### PR
+
+- 本文・見出しは日本語（見出し例：「概要」「テスト方法」）
+- テスト方法は `- [ ]` チェックリスト形式
+- タイトルは `type(scope): subject` 形式が望ましい
 
 ## 開発ワークフロー・カスタムコマンド
 
