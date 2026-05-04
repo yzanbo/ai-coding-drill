@@ -1,13 +1,16 @@
 {
-    "name": "ai-coding-drill",
-    "version": "0.0.0",
-    "private": true,
-    "packageManager": "pnpm@9.15.4",
-    "scripts": {
-        "commitlint": "commitlint"
-    },
-    "devDependencies": {
-        "@commitlint/cli": "^20.5.3",
-        "@commitlint/config-conventional": "^20.5.3"
-    }
+  "name": "ai-coding-drill",
+  "version": "0.0.0",
+  "description": "LLM が自動生成したプログラミング問題をサンドボックスで動作保証してから提供する TypeScript 練習サービス",
+  "private": true,
+  "license": "MIT",
+  "author": "Yohei Jinbo",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "commitlint": "commitlint"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3"
+  }
 }
