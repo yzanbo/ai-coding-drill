@@ -1,0 +1,13 @@
+{
+    "name": "ai-coding-drill",
+    "version": "0.0.0",
+    "private": true,
+    "packageManager": "pnpm@9.15.4",
+    "scripts": {
+        "commitlint": "commitlint"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^20.5.3",
+        "@commitlint/config-conventional": "^20.5.3"
+    }
+}
