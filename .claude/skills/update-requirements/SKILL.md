@@ -12,8 +12,12 @@ argument-hint: "[feature-name] [変更内容の説明]"
 
 ### 1. 現在の要件を読み込む
 
-- 機能要件：`docs/requirements/features/$0.md`
-- 関連するベース要件：[docs/requirements/base/](../../../docs/requirements/base/)（特に 02 / 04 / 09 / 10）
+- 機能要件：`docs/requirements/4-features/$0.md`
+- 関連するベース要件：[docs/requirements/](../../../docs/requirements/)
+  - [1-vision/03-user-stories.md](../../../docs/requirements/1-vision/03-user-stories.md)（ユーザーストーリー）
+  - [2-foundation/02-architecture.md](../../../docs/requirements/2-foundation/02-architecture.md)（アーキテクチャ）
+  - [3-cross-cutting/01-data-model.md](../../../docs/requirements/3-cross-cutting/01-data-model.md)（ER 図・データモデル）
+  - [3-cross-cutting/02-api-conventions.md](../../../docs/requirements/3-cross-cutting/02-api-conventions.md)（API 共通仕様）
 - 関連 ADR：[docs/adr/](../../../docs/adr/)
 
 ファイルが存在しない場合は、ユーザーに `/new-requirements` で先に作成することを提案する。
@@ -25,17 +29,17 @@ argument-hint: "[feature-name] [変更内容の説明]"
 - 変更差分をユーザーに提示して承認を得る
 - ビジネスルール、機能一覧、データモデル、API 仕様のいずれかに変更が生じるか判断
 - API 変更がある場合は、画面一覧の「使用 API」セクションも更新対象に含める
-- ベース要件の編集ルール [.claude/rules/base-requirements-docs.md](../../rules/base-requirements-docs.md) に従い、重複を避けてリンクで参照
+- ベース要件の編集ルール [.claude/rules/requirements-docs.md](../../rules/requirements-docs.md) に従い、重複を避けてリンクで参照
 - 承認後に要件 .md を保存
 
 ### 3. ベース要件への波及確認
 
 機能要件の変更が以下に波及するかを確認し、必要なら更新：
 
-- [02_functional.md](../../../docs/requirements/base/02_functional.md)：機能一覧 F-XX
-- [04_architecture.md](../../../docs/requirements/base/04_architecture.md)：コンポーネント責務、データフロー
-- [09_data_model.md](../../../docs/requirements/base/09_data_model.md)：ER 図、テーブル定義
-- [10_api_spec.md](../../../docs/requirements/base/10_api_spec.md)：エンドポイント一覧
+- [01-overview.md](../../../docs/requirements/1-vision/01-overview.md)：機能一覧 F-XX
+- [02-architecture.md](../../../docs/requirements/2-foundation/02-architecture.md)：コンポーネント責務、データフロー
+- [01-data-model.md](../../../docs/requirements/3-cross-cutting/01-data-model.md)：ER 図、テーブル定義
+- [02-api-conventions.md](../../../docs/requirements/3-cross-cutting/02-api-conventions.md)：エンドポイント一覧
 
 ### 4. ADR 化の判断
 
@@ -56,4 +60,4 @@ ADR は [docs/adr/template.md](../../../docs/adr/template.md) を元に作成。
 
 ### 6. ステータス更新
 
-実装完了後、`docs/requirements/features/$0.md` のステータスを適宜更新する。
+実装完了後、`docs/requirements/4-features/$0.md` のステータスを適宜更新する。

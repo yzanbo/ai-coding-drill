@@ -1,6 +1,6 @@
 # Architecture Decision Records（ADR）
 
-重要な技術・設計判断を 1 ファイル 1 決定で記録するディレクトリ。
+重要な技術・設計判断を **1 ファイル 1 決定 / Append-only** で記録するディレクトリ。
 
 ## 目的
 
@@ -8,58 +8,167 @@
 - 検討した代替案・トレードオフを残し、将来の見直しに活かす
 - ポートフォリオ・チーム内での設計レビューの素材にする
 
+---
+
+## 📚 カテゴリ別索引（19 件）
+
+採用担当者・面接官の方は、興味のある観点から該当 ADR を探せます。
+
+### 🏗️ アーキテクチャ判断（7 件）
+
+システム構造・データフロー・コンポーネント間連携に関わる中核判断。
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0001](./0001-postgres-as-job-queue.md) | Postgres をジョブキューに採用（Redis Streams / RabbitMQ / NATS 等を不採用） | SKIP LOCKED / LISTEN/NOTIFY / Outbox 不要 |
+| [0006](./0006-redis-not-for-job-queue.md) | Redis をジョブキュー用途では使わない（キャッシュ・セッション・レート制限のみ） | 役割の明確化 / 二系統回避 |
+| [0008](./0008-disposable-sandbox-container.md) | 採点コンテナの使い捨て方式（ウォームプール不採用） | セキュリティ × スループット |
+| [0009](./0009-custom-llm-judge.md) | LLM-as-a-Judge を自前実装（DeepEval / Ragas 等の依存を回避） | 評価ロジックの差別化軸 |
+| [0010](./0010-phased-language-introduction.md) | 言語の段階導入（MVP は TS+Go、R7 で Python 追加） | ポリグロット戦略 |
+| [0011](./0011-llm-provider-abstraction.md) | LLM プロバイダ抽象化戦略（特定モデルへの依存を排除） | ベンダーロックイン回避 / 可逆な判断の遅延 |
+| [0017](./0017-w3c-trace-context-in-job-payload.md) | W3C Trace Context をジョブペイロードに埋め込んでプロセス境界トレース連携を実現 | 分散トレース / SpanLink / OTel Messaging |
+
+### 🔧 技術スタック判断（5 件）
+
+各レイヤで採用する具体的な技術・フレームワーク・ライブラリの選定。
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0003](./0003-codemirror-over-monaco.md) | CodeMirror 6 採用（Monaco Editor 不採用） | バンドル軽量化 / モバイル対応 |
+| [0004](./0004-nestjs-for-backend.md) | バックエンド API に NestJS を採用（Hono / Fastify / Express 不採用） | DI / Module / Guard / レイヤード設計 |
+| [0005](./0005-go-for-grading-worker.md) | 採点ワーカーを Go で実装（Node / Rust 不採用） | シングルバイナリ / goroutine / Docker SDK |
+| [0015](./0015-github-oauth-with-extensible-design.md) | 認証は GitHub OAuth のみ実装、ただし複数プロバイダへ拡張可能な設計 | Strategy パターン / users + auth_providers |
+| [0016](./0016-drizzle-orm-over-prisma.md) | ORM に Drizzle を採用（Prisma 不採用） | 型推論 / 生 SQL 親和性 / コールドスタート |
+
+### ☁️ インフラ判断（2 件）
+
+クラウド・ホスティング・インフラ運用に関わる判断。
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0002](./0002-aws-single-cloud.md) | AWS 単独クラウド（マルチクラウド不採用） | エコシステム集中 / 複雑度回避 |
+| [0007](./0007-upstash-redis-over-elasticache.md) | Upstash Redis 採用（ElastiCache 不採用） | サーバレス / 無料枠 / コスト効率 |
+
+### 📋 開発規律判断（5 件）
+
+モノレポ運用・コード品質・型生成・ツール導入規律など、**開発体験を支える判断**。
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0012](./0012-turborepo-pnpm-monorepo.md) | モノレポツールに Turborepo + pnpm workspaces を採用 | ビルドキャッシュ / 並列実行 |
+| [0013](./0013-biome-for-tooling.md) | コード品質ツールに Biome を採用（ESLint + Prettier 不採用） | Rust 製高速 / 設定統一 |
+| [0014](./0014-json-schema-as-single-source-of-truth.md) | 共有データ型は JSON Schema を Single Source of Truth とし各言語向けに自動生成 | 3 言語型整合 / 新言語追加コスト最小 |
+| [0018](./0018-phase-0-tooling-discipline.md) | 補完ツール（Knip / lefthook / commitlint / syncpack）を R0 から導入 | YAGNI 例外条件 / 不可逆コスト膨張 |
+| [0019](./0019-requirements-as-5-buckets.md) | 要件定義書を「時系列 × 変更頻度」の 5 バケット構造に再編 | ドキュメント設計 / SSoT / 読む順序と書く順序 |
+
+---
+
+## 📝 連番一覧（時系列）
+
+書かれた順序で全 18 件を一覧する場合：
+
+| # | タイトル | カテゴリ |
+|---|---|---|
+| [0001](./0001-postgres-as-job-queue.md) | Postgres をジョブキューに採用 | 🏗️ アーキテクチャ |
+| [0002](./0002-aws-single-cloud.md) | AWS 単独クラウド | ☁️ インフラ |
+| [0003](./0003-codemirror-over-monaco.md) | CodeMirror 6 採用 | 🔧 技術スタック |
+| [0004](./0004-nestjs-for-backend.md) | バックエンド API に NestJS を採用 | 🔧 技術スタック |
+| [0005](./0005-go-for-grading-worker.md) | 採点ワーカーを Go で実装 | 🔧 技術スタック |
+| [0006](./0006-redis-not-for-job-queue.md) | Redis をジョブキュー用途では使わない | 🏗️ アーキテクチャ |
+| [0007](./0007-upstash-redis-over-elasticache.md) | Upstash Redis 採用 | ☁️ インフラ |
+| [0008](./0008-disposable-sandbox-container.md) | 採点コンテナの使い捨て方式 | 🏗️ アーキテクチャ |
+| [0009](./0009-custom-llm-judge.md) | LLM-as-a-Judge を自前実装 | 🏗️ アーキテクチャ |
+| [0010](./0010-phased-language-introduction.md) | 言語の段階導入 | 🏗️ アーキテクチャ |
+| [0011](./0011-llm-provider-abstraction.md) | LLM プロバイダ抽象化戦略 | 🏗️ アーキテクチャ |
+| [0012](./0012-turborepo-pnpm-monorepo.md) | Turborepo + pnpm workspaces | 📋 開発規律 |
+| [0013](./0013-biome-for-tooling.md) | Biome 採用 | 📋 開発規律 |
+| [0014](./0014-json-schema-as-single-source-of-truth.md) | JSON Schema を SSoT に | 📋 開発規律 |
+| [0015](./0015-github-oauth-with-extensible-design.md) | GitHub OAuth + 拡張可能設計 | 🔧 技術スタック |
+| [0016](./0016-drizzle-orm-over-prisma.md) | ORM に Drizzle 採用 | 🔧 技術スタック |
+| [0017](./0017-w3c-trace-context-in-job-payload.md) | W3C Trace Context をジョブペイロードに埋め込む | 🏗️ アーキテクチャ |
+| [0018](./0018-phase-0-tooling-discipline.md) | 補完ツールを R0 から導入 | 📋 開発規律 |
+| [0019](./0019-requirements-as-5-buckets.md) | 要件定義書を 5 バケット時系列構造に再編 | 📋 開発規律 |
+
+---
+
+## 🎯 リリースとの関係
+
+各リリース（[5-roadmap/01-roadmap.md](../requirements/5-roadmap/01-roadmap.md) 参照）で参照される ADR：
+
+| リリース | 主な参照 ADR |
+|---|---|
+| **R0** 基盤整備 | [0012](./0012-turborepo-pnpm-monorepo.md) / [0013](./0013-biome-for-tooling.md) / [0014](./0014-json-schema-as-single-source-of-truth.md) / [0018](./0018-phase-0-tooling-discipline.md) |
+| **R1** MVP（最小貫通） | [0001](./0001-postgres-as-job-queue.md) / [0003](./0003-codemirror-over-monaco.md) / [0004](./0004-nestjs-for-backend.md) / [0005](./0005-go-for-grading-worker.md) / [0008](./0008-disposable-sandbox-container.md) / [0011](./0011-llm-provider-abstraction.md) / [0015](./0015-github-oauth-with-extensible-design.md) / [0016](./0016-drizzle-orm-over-prisma.md) / [0017](./0017-w3c-trace-context-in-job-payload.md) |
+| **R2** 品質保証パイプライン | [0009](./0009-custom-llm-judge.md) / [0011](./0011-llm-provider-abstraction.md) |
+| **R3** サンドボックス強化 | [0008](./0008-disposable-sandbox-container.md) |
+| **R4** 観測性 | [0017](./0017-w3c-trace-context-in-job-payload.md) |
+| **R5** 仕上げ・公開 | [0002](./0002-aws-single-cloud.md) / [0007](./0007-upstash-redis-over-elasticache.md) |
+| **R7** Python 分析パイプライン | [0010](./0010-phased-language-introduction.md) / [0013](./0013-biome-for-tooling.md) |
+
+---
+
+## 📌 注目 ADR（採用担当者向け）
+
+差別化軸として特に深く読んでほしい 6 件：
+
+1. **[0008: 使い捨てサンドボックスコンテナ](./0008-disposable-sandbox-container.md)** — セキュリティ × スループットのトレードオフ判断、段階的隔離強化（Docker → gVisor → Firecracker）
+2. **[0011: LLM プロバイダ抽象化戦略](./0011-llm-provider-abstraction.md)** — ベンダーロックイン回避、可逆な判断の遅延という設計哲学
+3. **[0014: JSON Schema を SSoT に](./0014-json-schema-as-single-source-of-truth.md)** — 3 言語（TS/Go/Python）横断の型整合性を構造的に保証
+4. **[0017: W3C Trace Context をジョブペイロードに埋め込む](./0017-w3c-trace-context-in-job-payload.md)** — プロセス境界トレース連携、SpanLink vs Parent-Child の議論、OTel Messaging Semantic Conventions 準拠
+5. **[0018: 補完ツールを R0 から導入](./0018-phase-0-tooling-discipline.md)** — 「遅延の不可逆性が高い判断には YAGNI を適用しない」というメタ方針の確立
+6. **[0019: 要件定義書を 5 バケット時系列構造に再編](./0019-requirements-as-5-buckets.md)** — ドキュメント設計の判断を ADR 化した珍しい例、時系列 × 変更頻度での物理分離
+
+---
+
 ## 運用ルール
 
 ### ファイル命名
+
 - `NNNN-kebab-case-title.md`
 - 例：`0001-postgres-as-job-queue.md`、`0002-aws-single-cloud.md`
 - 連番は採番順、欠番不可
 
 ### ステータス
+
 - `Proposed`：提案中、議論中
 - `Accepted`：採用決定、実装に反映
 - `Deprecated`：もう使っていないが履歴として残す
 - `Superseded by NNNN`：別の ADR で上書きされた
 
 ### 不変性
-- 一度 `Accepted` した ADR は**本文を書き換えない**
+
+- 一度 `Accepted` した ADR は **本文を書き換えない**
 - 変更したい場合は新しい ADR を作って前の ADR の `Status` を `Superseded by NNNN` に更新する
 - 履歴の Append-only を徹底する
+- 補足情報（実装着手後の知見等）は本文末尾に「補足（YYYY-MM-DD 追加）」セクションとして追記可能（[ADR 0017](./0017-w3c-trace-context-in-job-payload.md) の補足参照）
 
 ### 書くタイミング
+
 - 設計上の選択肢が複数あり、どれかを選んだとき
 - 「なぜこうしたんだっけ？」と後から問われそうなとき
 - 一般的でない選択をしたとき（標準から外れる場合は必ず）
 
 ### 書かないもの
+
 - 自明な技術選定（HTTPS を使う、UTF-8 を使う等）
 - コーディング規約レベルの細かい実装詳細
 - 個人の好みや一時的な決定
 
+### 推奨セクション構成
+
+各 ADR は以下を必ず含める（→ [template.md](./template.md)）：
+
+- **Status / Date / Decision-makers**
+- **Context**（背景・課題）
+- **Decision**（決定内容）
+- **Alternatives Considered**（検討した代替案 — トレードオフ表で）
+- **Consequences**（結果・トレードオフ + 将来の見直しトリガー）
+- **References**（関連する要件定義書・他 ADR・外部資料）
+
+---
+
 ## テンプレート
+
 新規作成時は [template.md](./template.md) をコピーして使う。
-
-## 書き溜め予定（実装中に順次作成）
-
-このプロジェクトで ADR にする予定の決定：
-
-- 0001: Postgres `SELECT FOR UPDATE SKIP LOCKED` をジョブキューに採用（Redis Streams / RabbitMQ / NATS 等を不採用）
-- 0002: AWS 単独クラウド（マルチクラウド不採用）
-- 0003: CodeMirror 6 採用（Monaco Editor 不採用）
-- 0004: NestJS 採用（Hono / Fastify / Express 不採用）
-- 0005: 採点ワーカーを Go で実装（Node / Rust 不採用）
-- 0006: Redis をジョブキュー用途で不採用、キャッシュ・セッション・レート制限のみ
-- 0007: Upstash Redis 採用（ElastiCache 不採用）
-- 0008: 採点コンテナの使い捨て方式（ウォームプール不採用）
-- 0009: LLM-as-a-Judge を自前実装（DeepEval / Ragas 等の依存を回避）
-- 0010: 言語の段階導入（MVP は TS+Go、Phase 7 で Python 追加）
-- 0011: LLM プロバイダ抽象化戦略（特定モデルへの依存を排除）
-- 0012: モノレポツールに Turborepo + pnpm workspaces を採用
-- 0013: コード品質ツールに Biome を採用（ESLint + Prettier 不採用）
-- 0014: 共有データ型は JSON Schema を Single Source of Truth とし各言語向けに自動生成
-- 0015: 認証は GitHub OAuth のみ実装、ただし複数プロバイダへ拡張可能な設計とする
-- 0016: ORM に Drizzle を採用（Prisma 不採用）
-- 0017: W3C Trace Context をジョブペイロードに埋め込んでプロセス境界トレース連携を実現
-- 0018: 補完ツール（Knip / lefthook / commitlint / syncpack）を Phase 0 から導入
 
 実装中に発生した新たな決定も都度追加する。

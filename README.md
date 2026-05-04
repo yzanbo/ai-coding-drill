@@ -3,7 +3,53 @@
 > LLM が自動生成したプログラミング問題を、サンドボックス環境で検証・採点する学習サイト。
 > 「LLM の出力を信用せず、サンドボックスで動作保証する」設計思想を実装したポートフォリオプロジェクト。
 
-🚀 **デモ**: _（デプロイ後に追記予定）_
+🚀 **デモ**：_（デプロイ後に追記予定。R5 完了時に公開）_
+📊 **ステータス**：**設計フェーズ完了 / R1 着手予定**（[ロードマップ](docs/requirements/5-roadmap/01-roadmap.md) 参照）
+📚 **設計判断**：[19 本の ADR](docs/adr/) に体系化
+🛠️ **セットアップして動かしたい場合**：[CONTRIBUTING.md](CONTRIBUTING.md) を参照
+
+---
+
+## 📊 現在の進捗（2026-05 時点）
+
+| フェーズ | 状態 | 完了内容 |
+|---|---|---|
+| **設計フェーズ** | ✅ **完了** | 18 ADR / 要件定義書 5 バケット / アーキテクチャ図 3 種 / プロダクトバックログ |
+| **R0** 基盤整備 | ⏳ **着手予定** | モノレポ・Docker Compose・CI 雛形・補完ツール一式 |
+| **R1** MVP（最小貫通） | ⏳ 未着手 | F-01〜F-05 の一気通貫動作 |
+| **R2〜R5** 仕上げ | ⏳ 未着手 | 品質保証 / サンドボックス強化 / 観測性 / 公開 |
+
+> **ポートフォリオとしての位置づけ**：
+> 現時点では **設計力・ドキュメント力**が成果物の中心です。実装フェーズ（R1〜）が進むにつれ、動くサービス・スクリーンショット・デモ動画・ベンチマーク結果を順次追加していきます。
+>
+> - **設計シニア / アーキテクト枠**：現時点で十分に評価可能（[18 本の ADR](docs/adr/) を中心に閲覧推奨）
+> - **フルスタック枠**：R1（MVP 動作）完成までお待ちいただくか、設計判断の議論を中心に評価をお願いします
+>
+> 進捗は [5-roadmap/01-roadmap.md](docs/requirements/5-roadmap/01-roadmap.md) で更新します。
+
+---
+
+## 🎯 ポートフォリオとして見てほしいもの
+
+採用担当者・面接官の方は、以下の順で読むと短時間で評価できます：
+
+1. **[本 README のハイライト](#ハイライト)** ← 今ここ（差別化軸の概要）
+2. **[19 本の ADR（設計判断の記録）](docs/adr/)** ← 設計力アピールの中核
+3. **[要件定義書 5 バケット構造](docs/requirements/)** ← ドキュメント設計力
+4. **個別機能の詳細仕様**：[F-01](docs/requirements/4-features/F-01-github-oauth-auth.md) 〜 [F-05](docs/requirements/4-features/F-05-learning-history.md)
+5. **動くデモ** ← R5 公開後
+
+### 評価軸別の見どころマップ
+
+| 評価したい観点 | 推奨閲覧 |
+|---|---|
+| 設計判断・トレードオフの言語化能力 | [docs/adr/](docs/adr/) — 19 本の ADR |
+| アーキテクチャ設計力 | [02-architecture.md](docs/requirements/2-foundation/02-architecture.md) + [ADR 0001](docs/adr/0001-postgres-as-job-queue.md) / [0008](docs/adr/0008-disposable-sandbox-container.md) / [0017](docs/adr/0017-w3c-trace-context-in-job-payload.md) |
+| LLM アプリ設計力 | [03-llm-pipeline.md](docs/requirements/2-foundation/03-llm-pipeline.md) + [ADR 0009](docs/adr/0009-custom-llm-judge.md) / [0011](docs/adr/0011-llm-provider-abstraction.md) |
+| セキュリティ・サンドボックス設計 | [ADR 0008](docs/adr/0008-disposable-sandbox-container.md) + [F-04 自動採点](docs/requirements/4-features/F-04-auto-grading.md) |
+| 観測性設計（分散トレース連携） | [04-observability.md](docs/requirements/2-foundation/04-observability.md) + [ADR 0017](docs/adr/0017-w3c-trace-context-in-job-payload.md) |
+| ドキュメント設計力 | [docs/requirements/README.md](docs/requirements/README.md)（5 バケット時系列構造） |
+| アジャイル運用力 | [5-roadmap/01-roadmap.md](docs/requirements/5-roadmap/01-roadmap.md)（DoR / DoD / バックログ / リスクレジスタ） |
 
 ---
 
@@ -13,24 +59,87 @@
 
 1. **LLM 生成 × サンドボックス検証 × 多層品質保証パイプライン**
    生成された問題は、模範解答がサンドボックスで動作することを確認するまで DB に保存されない。「動かないコードが混入する」既存サービスの根本問題を構造的に解決。
+   → 詳細：[03-llm-pipeline.md](docs/requirements/2-foundation/03-llm-pipeline.md) / [ADR 0008](docs/adr/0008-disposable-sandbox-container.md)
 
 2. **品質評価の 4 レイヤ防御**（決定論チェック / LLM-as-a-Judge / ユーザー行動シグナル / 集合的評価）
    ミューテーションテスト・複数モデルによる多軸評価・人間評価との相関分析を組み合わせ、LLM 生成物の品質を継続的に担保。
+   → 詳細：[ADR 0009: LLM-as-a-Judge を自前実装](docs/adr/0009-custom-llm-judge.md)
 
-3. **TypeScript + Go のポリグロット構成**（Phase 7 で Python 追加）
+3. **TypeScript + Go のポリグロット構成**（R7 で Python 追加）
    実装速度（NestJS）・採点ワーカーの軽量並列性（Go）・LLM/評価エコシステム（Python）を、フェーズに応じて適材適所で導入。
+   → 詳細：[ADR 0010: 言語の段階導入](docs/adr/0010-phased-language-introduction.md)
 
 4. **Postgres ジョブキュー**（`SELECT FOR UPDATE SKIP LOCKED` + `LISTEN/NOTIFY`）
    外部キューミドルウェア不要、解答登録とジョブ登録を同一トランザクションで処理。Outbox パターン回避。
+   → 詳細：[ADR 0001: Postgres をジョブキューに採用](docs/adr/0001-postgres-as-job-queue.md) / [ADR 0006](docs/adr/0006-redis-not-for-job-queue.md)
 
 5. **使い捨てコンテナによるサンドボックス**（Docker → gVisor → Firecracker の段階強化）
    ジョブごとにコンテナを生成・破棄。前回実行の影響が原理的に残らない強い隔離。
+   → 詳細：[ADR 0008: 使い捨てサンドボックスコンテナ](docs/adr/0008-disposable-sandbox-container.md)
 
 6. **LLM プロバイダ抽象化レイヤ**（Anthropic / Google / OpenAI / OpenRouter を差し替え可能）
    モデル選定はベンチマークに基づき適時更新。「アーキテクチャ判断とモデル選定を分離する」設計原則を実装。
+   → 詳細：[ADR 0011: LLM プロバイダ抽象化戦略](docs/adr/0011-llm-provider-abstraction.md)
 
-7. **AWS 単独 + IaC（Terraform）+ 観測性（OTel + Grafana + Sentry）**
+7. **W3C Trace Context をジョブペイロードに埋め込んだプロセス境界トレース連携**
+   NestJS（Producer）→ Postgres → Go ワーカー（Consumer）が単一 trace_id で連結可視化。標準仕様準拠でベンダー非依存。
+   → 詳細：[ADR 0017: W3C Trace Context をジョブペイロードに埋め込む](docs/adr/0017-w3c-trace-context-in-job-payload.md)
+
+8. **JSON Schema を SSoT とする 3 言語横断型生成**（TS / Go / Python）
+   スキーマ変更が 1 箇所で全言語追従。新言語追加コスト最小。
+   → 詳細：[ADR 0014: JSON Schema を SSoT に](docs/adr/0014-json-schema-as-single-source-of-truth.md)
+
+9. **AWS 単独 + IaC（Terraform）+ 観測性（OTel + Grafana + Sentry）**
    コスト最適化（月 $10〜30）・無料枠活用・運用設計まで含めたエンドツーエンドの構成。
+   → 詳細：[ADR 0002: AWS 単独](docs/adr/0002-aws-single-cloud.md) / [04-observability.md](docs/requirements/2-foundation/04-observability.md)
+
+---
+
+## 📚 設計判断（ADR）索引
+
+複数案を検討して 1 つを選んだ判断は、すべて [docs/adr/](docs/adr/) に **1 ファイル 1 決定 / Append-only** で記録しています。
+
+### 🏗️ アーキテクチャ判断
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0001](docs/adr/0001-postgres-as-job-queue.md) | Postgres をジョブキューに採用 | SKIP LOCKED / LISTEN/NOTIFY / Outbox 不要 |
+| [0006](docs/adr/0006-redis-not-for-job-queue.md) | Redis をジョブキューでは使わない | 役割の明確化 |
+| [0008](docs/adr/0008-disposable-sandbox-container.md) | 使い捨てサンドボックスコンテナ | セキュリティ × スループット |
+| [0009](docs/adr/0009-custom-llm-judge.md) | LLM-as-a-Judge を自前実装 | DeepEval / Ragas 不採用 |
+| [0010](docs/adr/0010-phased-language-introduction.md) | 言語の段階導入（TS+Go → Python） | ポリグロット戦略 |
+| [0011](docs/adr/0011-llm-provider-abstraction.md) | LLM プロバイダ抽象化戦略 | ベンダーロックイン回避 |
+| [0017](docs/adr/0017-w3c-trace-context-in-job-payload.md) | W3C Trace Context をジョブペイロードに埋め込む | プロセス境界トレース連携 |
+
+### 🔧 技術スタック判断
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0003](docs/adr/0003-codemirror-over-monaco.md) | CodeMirror 6 採用（Monaco 不採用） | バンドル軽量化 |
+| [0004](docs/adr/0004-nestjs-for-backend.md) | バックエンドに NestJS 採用 | DI / Module / レイヤード設計 |
+| [0005](docs/adr/0005-go-for-grading-worker.md) | 採点ワーカーを Go で実装 | シングルバイナリ / goroutine |
+| [0015](docs/adr/0015-github-oauth-with-extensible-design.md) | GitHub OAuth + 拡張可能設計 | Strategy パターン |
+| [0016](docs/adr/0016-drizzle-orm-over-prisma.md) | ORM に Drizzle 採用（Prisma 不採用） | 型推論 / 生 SQL 親和性 |
+
+### ☁️ インフラ判断
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0002](docs/adr/0002-aws-single-cloud.md) | クラウドは AWS 単独 | マルチクラウド不採用 |
+| [0007](docs/adr/0007-upstash-redis-over-elasticache.md) | Upstash Redis 採用 | サーバレス / 無料枠 |
+
+### 📋 開発規律判断
+
+| ADR | タイトル | キーワード |
+|---|---|---|
+| [0012](docs/adr/0012-turborepo-pnpm-monorepo.md) | Turborepo + pnpm workspaces | モノレポ運用 |
+| [0013](docs/adr/0013-biome-for-tooling.md) | Biome 採用（ESLint+Prettier 不採用） | Rust 製 / 高速 |
+| [0014](docs/adr/0014-json-schema-as-single-source-of-truth.md) | JSON Schema を SSoT に | 3 言語型自動生成 |
+| [0018](docs/adr/0018-phase-0-tooling-discipline.md) | 補完ツールを R0 から導入 | Knip / lefthook / commitlint / syncpack |
+| [0019](docs/adr/0019-requirements-as-5-buckets.md) | 要件定義書を 5 バケット時系列構造に再編 | ドキュメント設計 / SSoT / 読む順序 vs 書く順序 |
+
+→ 索引一覧：[docs/adr/README.md](docs/adr/README.md)
+→ ADR 運用ルール：1 決定 1 ファイル / Append-only / 代替案・トレードオフ・将来見直しトリガーを必ず記録
 
 ---
 
@@ -43,203 +152,14 @@
 | **採点ワーカー** | Go + Docker クライアント（公式）+ pgx |
 | **データストア** | PostgreSQL 16（DB + ジョブキュー兼任）+ Upstash Redis（キャッシュ・セッション） |
 | **LLM** | プロバイダ抽象化（Anthropic / Gemini / OpenAI / OpenRouter 差し替え可） |
-| **サンドボックス** | Docker（使い捨てコンテナ）→ Phase 2 で gVisor → Phase 3 で Firecracker |
+| **サンドボックス** | Docker（使い捨てコンテナ）→ R3 で gVisor → R9 で Firecracker |
 | **モノレポ** | Turborepo + pnpm workspaces |
 | **コード品質** | Biome（lint+format）+ TypeScript（tsc）+ gofmt + golangci-lint |
 | **インフラ** | AWS（ECS Fargate + EC2 + RDS + ECR + Route 53）+ Terraform |
 | **観測性** | OpenTelemetry + Grafana + Loki + Tempo + Sentry |
 | **CI/CD** | GitHub Actions |
 
-詳細は [docs/requirements/base/07_tech_stack.md](docs/requirements/base/07_tech_stack.md) を参照。
-
----
-
-## クイックスタート
-
-### 必要ツール
-
-| ツール | バージョン | 用途 |
-|---|---|---|
-| Node.js | 20+ | TS アプリ実行 |
-| pnpm | 9+ | パッケージ管理 |
-| Go | 1.22+ | 採点ワーカー |
-| Docker | Desktop / Engine | サンドボックス + ローカル DB |
-| psql | 任意 | DB クライアント（デバッグ用） |
-
-### セットアップ
-
-```bash
-# 1. リポジトリ取得
-git clone https://github.com/yohei/ai-coding-drill.git
-cd ai-coding-drill
-
-# 2. 環境変数を設定
-cp .env.example .env
-cp apps/api/.env.example apps/api/.env
-cp apps/web/.env.example apps/web/.env
-# 各 .env を編集：DATABASE_URL / REDIS_URL / GitHub OAuth Secret 等
-
-# 3. 依存パッケージをインストール
-pnpm install
-
-# 4. ローカル DB / Redis を起動
-docker compose up -d
-
-# 5. DB マイグレーション
-pnpm db:migrate
-
-# 6. シードデータ投入（任意）
-pnpm db:seed
-
-# 7. 全アプリを並列起動
-pnpm dev
-```
-
-### 動作確認
-
-| サービス | URL |
-|---|---|
-| Web | http://localhost:3000 |
-| API（Swagger UI） | http://localhost:3001/api/docs |
-| API ヘルスチェック | http://localhost:3001/healthz |
-| Drizzle Studio（DB GUI） | `pnpm db:studio` で起動 |
-
-### 主要な環境変数
-
-ルート `.env`：
-| 変数 | 例 | 説明 |
-|---|---|---|
-| `DATABASE_URL` | `postgresql://user:pass@localhost:5432/aicoding` | Postgres 接続文字列 |
-| `REDIS_URL` | `redis://localhost:6379` | Redis 接続文字列 |
-| `NODE_ENV` | `development` | 実行環境 |
-
-`apps/api/.env`：
-| 変数 | 説明 |
-|---|---|
-| `PORT` | API サーバポート（既定 3001） |
-| `GITHUB_CLIENT_ID` | GitHub OAuth App の Client ID |
-| `GITHUB_CLIENT_SECRET` | GitHub OAuth App の Client Secret |
-| `SESSION_SECRET` | セッション署名用秘密鍵（32 文字以上） |
-| `ANTHROPIC_API_KEY` | Claude API キー（採用時） |
-| `GEMINI_API_KEY` | Gemini API キー（採用時） |
-
-`apps/web/.env`：
-| 変数 | 説明 |
-|---|---|
-| `NEXT_PUBLIC_API_URL` | API サーバの URL（例 `http://localhost:3001`） |
-
-### トラブルシューティング
-
-| 症状 | 対処 |
-|---|---|
-| `docker compose up` で Postgres ポート衝突 | ホストの 5432 を使う既存 Postgres を停止、または `docker-compose.yml` のポートを変更 |
-| `pnpm install` が遅い・失敗する | `pnpm store prune` でキャッシュクリア |
-| Drizzle マイグレーション失敗 | DB が起動しているか `docker compose ps` で確認、`pnpm db:reset` で初期化 |
-| API が GitHub OAuth で 500 を返す | `.env` の `GITHUB_CLIENT_*` と `SESSION_SECRET` が設定されているか確認 |
-| 採点ワーカーが Docker に接続できない | `docker.sock` の権限確認、Docker Desktop が起動しているか確認 |
-| Vitest 実行時 `tsx` not found | サンドボックスイメージを再ビルド：`pnpm sandbox:build` |
-
----
-
-## ディレクトリ構成
-
-```
-apps/                    実行可能アプリ（web / api / grading-worker）
-packages/                共有パッケージ（shared-types / prompts / config）
-infra/                   Terraform（network / db / ecs / worker / monitoring）
-docs/                    要件定義書（10 章）+ ADR（15 本以上）
-.github/workflows/       GitHub Actions（CI / デプロイ）
-docker-compose.yml       ローカル開発環境
-turbo.json               Turborepo 設定
-pnpm-workspace.yaml      pnpm workspaces 設定
-biome.json               Biome 設定
-```
-
-詳細な構成は [docs/adr/0012-turborepo-pnpm-monorepo.md](docs/adr/0012-turborepo-pnpm-monorepo.md) を参照。
-
----
-
-## 開発コマンド
-
-### Turborepo タスク
-
-```bash
-pnpm dev                 # 全アプリ並列起動
-pnpm build               # 全パッケージビルド（依存順）
-pnpm test                # 全テスト実行
-pnpm lint                # Biome チェック
-pnpm format              # Biome フォーマット
-pnpm typecheck           # tsc --noEmit（型チェック）
-```
-
-### 個別アプリのみ実行
-
-```bash
-pnpm --filter @ai-coding-drill/web dev
-pnpm --filter @ai-coding-drill/api dev
-pnpm --filter @ai-coding-drill/grading-worker dev
-```
-
-### DB 関連
-
-```bash
-pnpm db:migrate          # マイグレーション適用
-pnpm db:reset            # DB を初期化（破壊的）
-pnpm db:seed             # シードデータ投入
-pnpm db:studio           # Drizzle Studio 起動
-pnpm db:generate         # マイグレーション生成（スキーマ変更後）
-```
-
-### Go ワーカー
-
-```bash
-cd apps/grading-worker
-go run ./cmd/worker      # ローカル実行
-go test ./...            # テスト
-golangci-lint run        # リント
-```
-
-### サンドボックスイメージ
-
-```bash
-pnpm sandbox:build       # 採点用コンテナイメージビルド
-```
-
----
-
-## ドキュメント
-
-### 要件定義書（base）
-
-プロジェクトの設計全体を 10 章で記述：
-
-| # | ファイル | 内容 |
-|---|---|---|
-| 01 | [overview](docs/requirements/base/01_overview.md) | プロジェクト概要・ゴール |
-| 02 | [functional](docs/requirements/base/02_functional.md) | 機能要件 |
-| 03 | [non_functional](docs/requirements/base/03_non_functional.md) | 非機能要件 |
-| 04 | [architecture](docs/requirements/base/04_architecture.md) | アーキテクチャ・データフロー |
-| 05 | [llm_pipeline](docs/requirements/base/05_llm_pipeline.md) | LLM パイプライン・品質評価 |
-| 06 | [observability](docs/requirements/base/06_observability.md) | 観測性 |
-| 07 | [tech_stack](docs/requirements/base/07_tech_stack.md) | 技術スタック・選定理由 |
-| 08 | [milestones](docs/requirements/base/08_milestones.md) | マイルストーン |
-| 09 | [data_model](docs/requirements/base/09_data_model.md) | ER 図・テーブル定義 |
-| 10 | [api_spec](docs/requirements/base/10_api_spec.md) | API 仕様 |
-
-### ADR（Architecture Decision Records）
-
-重要な設計判断の履歴：[docs/adr/](docs/adr/)
-
-代表的な ADR：
-- [0001: Postgres をジョブキューに採用](docs/adr/0001-postgres-as-job-queue.md)
-- [0003: CodeMirror 6 採用（Monaco 不採用）](docs/adr/0003-codemirror-over-monaco.md)
-- [0008: 採点コンテナの使い捨て方式](docs/adr/0008-disposable-sandbox-container.md)
-- [0011: LLM プロバイダ抽象化戦略](docs/adr/0011-llm-provider-abstraction.md)
-- [0014: JSON Schema を Single Source of Truth に](docs/adr/0014-json-schema-as-single-source-of-truth.md)
-
-### システム概要
-
-[SYSTEM_OVERVIEW.md](SYSTEM_OVERVIEW.md) — 物理配置・コンポーネントの責務・ジョブの流れ。
+詳細は [2-foundation/05-runtime-stack.md](docs/requirements/2-foundation/05-runtime-stack.md) を参照。
 
 ---
 
@@ -260,23 +180,54 @@ pnpm sandbox:build       # 採点用コンテナイメージビルド
      └── 使い捨て採点コンテナ（Vitest 実行）
 ```
 
-詳細は [04_architecture.md](docs/requirements/base/04_architecture.md) を参照。
+詳細は [2-foundation/02-architecture.md](docs/requirements/2-foundation/02-architecture.md) を参照。
 
 ---
 
-## 開発フェーズ
+## リリース計画
 
-| Phase | 内容 | 状態 |
+| リリース | アウトカム | 状態 |
 |---|---|---|
-| Phase 0 | 基盤整備（モノレポ・Docker Compose・CI 雛形） | _未着手_ |
-| Phase 1 | MVP（認証・問題生成・採点・最低限フロント） | _未着手_ |
-| Phase 2 | 品質保証パイプライン（Judge・ミューテーションテスト） | _未着手_ |
-| Phase 3 | サンドボックス強化（gVisor） | _未着手_ |
-| Phase 4 | 観測性（OTel・Grafana・管理ダッシュボード） | _未着手_ |
-| Phase 5 | 仕上げ（IaC・E2E・本番デプロイ） | _未着手_ |
-| Phase 7 | Python 評価パイプライン + RAG | _Phase 6 以降の任意_ |
+| R0 | 基盤整備（モノレポ・Docker Compose・CI 雛形・補完ツール一式） | _未着手_ |
+| R1 | MVP（認証・問題生成・採点・最低限フロント・一気通貫動作） | _未着手_ |
+| R2 | 品質保証パイプライン（Judge・ミューテーションテスト・非同期ジョブ完成） | _未着手_ |
+| R3 | サンドボックス強化（gVisor + ベンチマーク） | _未着手_ |
+| R4 | 観測性（OTel・Grafana・Sentry・管理ダッシュボード） | _未着手_ |
+| R5 | 仕上げ（IaC・E2E・本番デプロイ・README 完成） | _未着手_ |
+| R6 以降 | 任意（適応型出題・LLM ヒント・Python 評価パイプライン・多言語化・Firecracker） | _任意_ |
 
-詳細は [08_milestones.md](docs/requirements/base/08_milestones.md) を参照。
+詳細は [5-roadmap/01-roadmap.md](docs/requirements/5-roadmap/01-roadmap.md) を参照。
+
+---
+
+## ドキュメント索引
+
+### 要件定義書（5 バケット時系列構造）
+
+| # | バケット | 役割 | 変更頻度 |
+|---|---|---|---|
+| 1 | [1-vision/](docs/requirements/1-vision/) | プロジェクトビジョン・ペルソナ・ユーザーストーリー | 極小 |
+| 2 | [2-foundation/](docs/requirements/2-foundation/) | 非機能・アーキテクチャ・LLM パイプライン・観測性・実装技術・開発フロー | 小 |
+| 3 | [3-cross-cutting/](docs/requirements/3-cross-cutting/) | ER 図・API 共通仕様 | 中 |
+| 4 | [4-features/](docs/requirements/4-features/) | 個別機能（F-XX）の詳細仕様 | 大 |
+| 5 | [5-roadmap/](docs/requirements/5-roadmap/) | ロードマップ・プロダクトバックログ・スプリント運用 | 大 |
+
+→ 全体マップ：[docs/requirements/README.md](docs/requirements/README.md)
+
+### 個別機能（4-features/）
+
+| ID | 機能名 |
+|---|---|
+| [F-01](docs/requirements/4-features/F-01-github-oauth-auth.md) | GitHub OAuth ログイン |
+| [F-02](docs/requirements/4-features/F-02-problem-generation.md) | 問題生成リクエスト |
+| [F-03](docs/requirements/4-features/F-03-problem-display-and-answer.md) | 問題表示・解答入力 |
+| [F-04](docs/requirements/4-features/F-04-auto-grading.md) | 自動採点 |
+| [F-05](docs/requirements/4-features/F-05-learning-history.md) | 学習履歴・統計 |
+
+### その他
+
+- [SYSTEM_OVERVIEW.md](SYSTEM_OVERVIEW.md) — 物理配置・コンポーネントの責務・ジョブの流れ
+- [docs/runbook/](docs/runbook/) — 運用 Runbook（R4 以降で整備）
 
 ---
 
@@ -287,18 +238,16 @@ pnpm sandbox:build       # 採点用コンテナイメージビルド
 - **可逆な判断は遅延させる**：LLM モデル選定・Python 型チェッカー選定など、市場が変化する領域は実装着手時に決定
 - **過剰設計を避ける**：使うか分からない抽象化を先取りで作らない（YAGNI）
 - **ただし拡張容易性は構造的に確保**：認証プロバイダ・LLM プロバイダ・サンドボックスランタイムは差し替え可能に
+- **遅延の不可逆性が高い判断には YAGNI を適用しない**：プロセス境界トレース連携や補完ツールは R0 から導入（[ADR 0017](docs/adr/0017-w3c-trace-context-in-job-payload.md) / [ADR 0018](docs/adr/0018-phase-0-tooling-discipline.md)）
 - **規模に応じた選定**：このプロジェクト規模（小〜中）に最適なツールを選ぶ。Bazel・Kafka・Nx 等の "本格派" は不採用
 - **設計判断を ADR で記録**：「なぜそう決めたか」「他案は何だったか」を Append-only で残す
 
 ---
 
-## 開発フロー
+## 開発参加・セットアップ
 
-- **ブランチ戦略**：Trunk-based + フィーチャーブランチ
-  - `main` が唯一の長期ブランチ
-  - 機能開発は `feature/<short-name>` で作業 → PR → main へマージ
-  - リリースはタグ（`v0.1.0` 等）で管理、リリースブランチは作らない
-- **コミット**：意味のある単位で commit、メッセージは英語推奨（実装中に Conventional Commits 採用判断）
+このプロジェクトをローカルで動かしたい場合は **[CONTRIBUTING.md](CONTRIBUTING.md)** を参照してください。
+セットアップ手順 / 環境変数 / 開発コマンド / トラブルシューティング / カスタムコマンド一覧 が掲載されています。
 
 ---
 
