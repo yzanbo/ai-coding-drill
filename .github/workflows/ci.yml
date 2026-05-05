@@ -117,40 +117,32 @@ jobs:
       # ──────────────────────────────────────────────────────────────
       # 経路 A：pull_request イベント時（PR レビューでの検証）
       #   範囲: base.sha（main 側の根元） .. head.sha（PR の最新）
-      #   流れ: ① PR コミット群を取得 → ② base を 1 件追加取得 → ③ commitlint で範囲走査
+      #   流れ: ① base が手元に届くまで深掘り → ② commitlint で範囲走査
       #
-      # 共通の取得方針：
-      #   - --shallow-exclude=<base.sha> で「base.sha 直前まで」を境界に head.sha を取得し、
-      #     PR で追加された全コミットだけをローカル DB に持ち込む。
-      #   - その後 base.sha 単体を --depth=1 で追加取得し、`base..head` の範囲解決を成立させる。
-      #   - これにより取得コストは「PR のコミット数 + 1」に収まり、
-      #     リポジトリ全体の運用期間（累積コミット数）には依存しない。
+      # 取得方針（iterative deepen）：
+      #   - actions/checkout の depth=1 では base.sha と PR コミット群が手元に無く、
+      #     `git log base..head` が "Invalid revision range" で失敗する。
+      #   - 標準的回避策として `--shallow-exclude=<sha>` があるが、
+      #     GitHub の Git プロトコルでは SHA 指定での acknowledgments 機能が未対応で
+      #     "fatal: expected 'acknowledgments'" で失敗する（実 CI で確認済み）。
+      #   - そこで base.sha が `git cat-file -e` で到達可能になるまで
+      #     20 コミット単位で deepen を繰り返す方式を採る。
+      #   - 取得量は「PR コミット数を 20 単位に切り上げた値」で、リポジトリ全体の
+      #     運用期間・累積コミット数には依存しない。
       # ──────────────────────────────────────────────────────────────
 
-      # ① actions/checkout が PR の merge ref を depth=1 で取得した時点では、
-      #    head.sha やその祖先（PR コミット群）の commit object が抜けていることがあり、
-      #    commitlint の `git log base..head` が "Invalid revision range" で失敗する。
-      #    --shallow-exclude=<sha> は「指定 SHA とそれより古い祖先を除外して」fetch するので、
-      #    base.sha 直前まで（= PR で増えたコミット）をピンポイントで取得できる。
-      - name: "[PR] Fetch PR commits"
+      # ① base.sha が手元に届くまで `--deepen=20` を繰り返す。
+      #    通常 PR は 1〜5 コミット程度なので 1 回（20 コミット）で十分届く。
+      #    深い PR でも数回のループで終わる。
+      - name: "[PR] Deepen until base reachable"
         if: github.event_name == 'pull_request'
         run: |
-          git fetch --no-tags \
-            --shallow-exclude="${{ github.event.pull_request.base.sha }}" \
-            origin "${{ github.event.pull_request.head.sha }}"
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          until git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; do
+            git fetch --no-tags --deepen=20 origin
+          done
 
-      # ② base.sha 単体を追加取得し、`base..head` の範囲指定を成立可能にする。
-      #      --depth=1 : base.sha **とその祖先まで遡らず、base 単体のオブジェクトだけ**取得。
-      #                  これを付けないと main の歴史を遡って取得し、リポジトリ運用期間に
-      #                  比例して遅くなる（fetch-depth: 0 と同じ劣化が発生する）。
-      #      --no-tags : タグ転送をスキップ（commitlint には不要、転送量削減）
-      - name: "[PR] Fetch base ref"
-        if: github.event_name == 'pull_request'
-        run: |
-          git fetch --no-tags --depth=1 origin \
-            "${{ github.event.pull_request.base.sha }}"
-
-      # ③ base..head の範囲のコミットメッセージを 1 件ずつ規約検証する。
+      # ② base..head の範囲のコミットメッセージを 1 件ずつ規約検証する。
       #    base.sha / head.sha は GitHub が PR メタデータとして注入する範囲指定用 SHA。
       - name: "[PR] Validate commits"
         if: github.event_name == 'pull_request'
@@ -162,7 +154,7 @@ jobs:
       # ──────────────────────────────────────────────────────────────
       # 経路 B：push イベント時（main への push 後の事後検証）
       #   範囲: before .. after（この push で追加されたコミット全件）
-      #   流れ: ① push コミット群を取得 → ② before を 1 件追加取得 → ③ commitlint で範囲走査
+      #   流れ: ① before が手元に届くまで深掘り → ② commitlint で範囲走査
       #
       #   before / after は GitHub が push payload に注入する SHA：
       #     before = push 前の HEAD（既存の main の最新）
@@ -175,26 +167,18 @@ jobs:
       #   通常 main は既存ブランチなのでこの分岐はほぼ通らない。
       # ──────────────────────────────────────────────────────────────
 
-      # ① before 直前までの祖先を除外して after を取得し、push で増えたコミットを揃える。
-      - name: "[push] Fetch push commits"
+      # ① before が手元に届くまで `--deepen=20` を繰り返す（経路 A と同じパターン）。
+      - name: "[push] Deepen until before reachable"
         if: >-
           github.event_name == 'push' &&
           github.event.before != '0000000000000000000000000000000000000000'
         run: |
-          git fetch --no-tags \
-            --shallow-exclude="${{ github.event.before }}" \
-            origin "${{ github.event.after }}"
+          BEFORE_SHA="${{ github.event.before }}"
+          until git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; do
+            git fetch --no-tags --deepen=20 origin
+          done
 
-      # ② before 単体を追加取得し、`before..after` の範囲指定を成立可能にする。
-      - name: "[push] Fetch before ref"
-        if: >-
-          github.event_name == 'push' &&
-          github.event.before != '0000000000000000000000000000000000000000'
-        run: |
-          git fetch --no-tags --depth=1 origin \
-            "${{ github.event.before }}"
-
-      # ③ before..after の範囲のコミットメッセージを 1 件ずつ規約検証する。
+      # ② before..after の範囲のコミットメッセージを 1 件ずつ規約検証する。
       - name: "[push] Validate commits"
         if: >-
           github.event_name == 'push' &&
