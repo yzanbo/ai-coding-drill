@@ -132,7 +132,7 @@ pnpm dev
 apps/                    実行可能アプリ（web / api / grading-worker）
 packages/                共有パッケージ（shared-types / prompts / config）
 infra/                   Terraform（network / db / ecs / worker / monitoring）
-docs/                    要件定義書（5 バケット構造）+ ADR（18 本以上）+ Runbook
+docs/                    要件定義書（5 バケット構造）+ ADR（31 本以上）+ Runbook
 .github/workflows/       GitHub Actions（CI / デプロイ）
 docker-compose.yml       ローカル開発環境
 turbo.jsonc              Turborepo 設定
@@ -156,6 +156,22 @@ pnpm lint                # Biome チェック（lint + format 差分を検出）
 pnpm lint:fix            # Biome 自動修正（フォーマット差分・修正可能な lint エラーを書き込み）
 pnpm typecheck           # tsc --noEmit（型チェック）
 ```
+
+### Git 作業の補助
+
+```bash
+pnpm g-clean             # マージ済みでリモートが消えたローカルブランチを一括削除
+                         # （必要なら main へ切替・最新化）
+```
+
+`pnpm g-clean` の挙動：
+
+1. 未コミット変更があれば中断
+2. `git fetch --prune` でリモート追跡参照を整理
+3. 現在ブランチがリモートで削除済み（`[gone]` 状態）なら main へ切替・`git pull --ff-only` で最新化
+4. `[origin/...: gone]` 状態のローカルブランチを全列挙して `git branch -D` で削除
+
+未 push のローカル専用ブランチや、リモートに残っているブランチは対象外（誤削除されない）。詳細は [scripts/cleanup-merged-branches.sh](scripts/cleanup-merged-branches.sh) と [ADR 0031](docs/adr/0031-github-repository-settings.md) を参照。
 
 ### 個別アプリのみ実行
 
