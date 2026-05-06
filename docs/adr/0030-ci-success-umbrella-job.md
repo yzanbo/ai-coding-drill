@@ -174,6 +174,7 @@ rules:
 - **GitHub Actions の `needs.*.result` 仕様への依存**：将来 GitHub 側がこの式評価を変える可能性は理論上あるが、長年安定している API なので低リスク
 - **本 ADR の効果は Ruleset 設定とセットでのみ発現**：このファイルを置いただけでは強制されない。**`protect-main` ルールセットの `required_status_checks` rule に `ci-success` を登録する作業が必要**
 - **スタック PR の責任シフトリスク**：中継ブランチ（feature1 等）への PR マージで CI 強制が効かないため、B さんの CI 赤を A さんが直す事故が理論上起こりうる。1 人運用の現状では発生しないため許容。複数人運用移行時は PR レビュー慣行で対処
+- **CI ファイル自体が壊れた場合の救出経路**：`.github/workflows/ci.yml` に YAML 構文エラー等が混入してワークフローが起動できなくなると、`ci-success` チェックが登録されないまま `protect-main` の Required status checks が「未完了」と判定し、PR が永久にマージ不能になる。復旧には Ruleset の一時無効化または admin bypass の追加が必要。CI ファイル変更時は構文を慎重に確認する
 
 ### 将来の見直しトリガー
 
@@ -187,5 +188,6 @@ rules:
 - [PR #16 - ci-success 集約ジョブ追加](https://github.com/yzanbo/ai-coding-drill/pull/16)
 - [ADR 0022 - GitHub Actions のスコープを段階的に拡張](./0022-github-actions-incremental-scope.md)
 - [ADR 0023 - CI/CD ツールに GitHub Actions を採用](./0023-github-actions-as-ci-cd.md)
-- [GitHub Docs - About protected branches / Require status checks](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches#require-status-checks-before-merging)
+- [GitHub Docs - About rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)
+- [GitHub Docs - Available rules for rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets#require-status-checks-to-pass-before-merging)
 - [GitHub Actions - Defining outputs and conditionals with `needs.*.result`](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idneedsresult)
