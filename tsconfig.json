@@ -32,11 +32,22 @@
     "resolveJsonModule": true
   },
 
-  // ルート直下の TS 設定ファイルのみを対象にする。
-  // workspace 配下（apps/ / packages/）は各 workspace の tsconfig が担当（再帰しない）。
-  // パターン解説：
-  //   "*.ts"  — ルート直下の通常 TS ファイル（commitlint.config.ts、将来の vitest.config.ts 等）
-  //   ".*.ts" — ルート直下のドットファイル TS（.syncpackrc.ts 等。`*` は dotfile を拾わないため別パターンが必要）
-  // 新規 TS 設定ファイルが増えても自動的に対象に入るため、include の保守が不要になる。
+  // include パターン：ルート直下の TS ファイルを 2 種類の glob で網羅する。
+  //
+  //   "*.ts"   通常 TS ファイル
+  //              対象例：commitlint.config.ts / 将来の vitest.config.ts 等
+  //
+  //   ".*.ts"  dotfile TS ファイル
+  //              対象例：.syncpackrc.ts 等
+  //              なぜ別パターンが必要か：
+  //                TypeScript の include glob は POSIX 慣習に従い `*` が `.` 始まりの
+  //                ファイル名を拾わない。dotfile を対象に含めるには明示パターンが必須。
+  //
+  // 範囲制限：ルート直下のみ（再帰しない）。
+  //   workspace 配下（apps/ / packages/）の TS ファイルは各 workspace の tsconfig が担当する。
+  //   workspace 用の型チェックは Turborepo 経由で `pnpm typecheck` から呼ばれる。
+  //
+  // 保守性：新規 TS 設定ファイルが上記 2 パターンのいずれかに該当すれば自動的に対象になるため、
+  //   ファイル追加のたびに include を編集する手間は不要。
   "include": ["*.ts", ".*.ts"]
 }

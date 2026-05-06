@@ -20,7 +20,12 @@ pre-commit:
       # `.ts` ファイルが 1 つでも staged にあれば tsconfig.json 全体を検証する。
       # 根拠：ADR 0028（設定ファイルは TS 化により型安全を機械保証する方針）。
       # 注：workspace 配下の TS 型チェックは Turborepo 経由で別途実行される（pnpm typecheck）。
-      glob: "*.ts"
+      #
+      # glob パターン：
+      #   "*.ts"  ─ 通常 TS ファイル（commitlint.config.ts 等）
+      #   ".*.ts" ─ dotfile TS ファイル（.syncpackrc.ts 等。`*` は dotfile を拾わないため別パターン）
+      #   tsconfig.json の include と対称（同じ範囲をトリガする）。
+      glob: "{*.ts,.*.ts}"
       run: pnpm exec tsc --noEmit -p tsconfig.json
 
 commit-msg:

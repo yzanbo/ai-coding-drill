@@ -17,7 +17,9 @@
 | `tsconfig.json` | JSONC | TypeScript の慣習（拡張子は `.json` だが JSONC 解釈） |
 | `biome.jsonc` | JSONC | Biome 公式が推奨 |
 | `turbo.jsonc` | JSONC | Turborepo の慣習 |
-| `commitlint.config.mjs` | MJS | 自由選択（JS / TS / JSON / YAML 可） |
+| `commitlint.config.mjs` ※ | MJS | 自由選択（JS / TS / JSON / YAML 可） |
+
+> ※ 上記テーブルは**本 ADR を起票した時点のスナップショット**である。本 ADR の Decision「即時適用」により、本 PR で `commitlint.config.mjs` は `commitlint.config.ts` に変換され、ADR 0028 の方針が第 1 例として実適用される。詳細は後述の「本 ADR の即時適用」を参照。
 
 ツール側の制約は 3 種類に分けられる：
 
