@@ -1,6 +1,6 @@
 # 07. GitHub リポジトリ設定
 
-> **このドキュメントの守備範囲**：GitHub リポジトリ側の設定で**デフォルトから変更している項目**および**意図的に決定した運用**の現行仕様（What）を一覧する。**選定理由**（Why）は [ADR 0031](../../adr/0031-github-repository-settings.md) を参照。
+> **このドキュメントの守備範囲**：GitHub リポジトリ側の設定で**デフォルトから変更している項目**の現行仕様（What）を一覧する。**選定理由**（Why）は [ADR 0031](../../adr/0031-github-repository-settings.md) を参照。
 > **CI/CD のジョブ設計（lint / typecheck / test 等）**は [06-dev-workflow.md](./06-dev-workflow.md) を参照。
 > **リポジトリの責務やコード構造**は [02-architecture.md](./02-architecture.md) を参照。
 
@@ -8,9 +8,9 @@
 
 ## 趣旨
 
-ポートフォリオ用途の public リポジトリとして、**GitHub の UI / API でデフォルト値から変更している設定**を最低限の粒度で記録する。デフォルト通りの項目は原則記載しない（ノイズになるため）。例外は「意識的にデフォルトを維持した」項目で、その判断理由がある場合のみ記す。
+GitHub の UI / API で**デフォルト値から変更している設定**のみを記録する。デフォルト通りの項目はノイズになるため記載しない。設定変更時は本ファイルと [ADR 0031](../../adr/0031-github-repository-settings.md) の両方を更新する。
 
-設定変更時は本ファイルと [ADR 0031](../../adr/0031-github-repository-settings.md) の両方を更新する。`gh` で現行値を読み出すコマンド例は本ファイル末尾の [現状確認コマンド](#現状確認コマンド) を参照。
+`gh` で現行値を読み出すコマンド例は本ファイル末尾の [現状確認コマンド](#現状確認コマンド) を参照。
 
 ---
 
@@ -18,13 +18,11 @@
 
 | 項目 | 値 |
 |---|---|
-| visibility | `public` |
 | description | "LLM-generated programming problems verified by sandboxed grading. Portfolio project." |
-| Collaborators | `yzanbo`（オーナー）のみ招待なし → マージ可能者は実質オーナー専有 |
 
 ---
 
-## Features（デフォルトから変更したもののみ）
+## Features
 
 | 機能 | 状態 | 変更理由 |
 |---|---|---|
@@ -32,7 +30,7 @@
 
 ---
 
-## Pull Requests / マージ動作（デフォルトから変更したもの）
+## Pull Requests / マージ動作
 
 | 項目 | 状態 |
 |---|---|
@@ -44,7 +42,6 @@
 
 - Auto-merge は有効化しているが、**PR ごとに明示的に "Enable auto-merge" を押した PR だけ**が CI 完了後に自動マージされる。デフォルトでは何も自動化されない
 - ブランチ自動削除は **GitHub のリモートブランチ**のみ対象。ローカル側はリポジトリ提供の **`pnpm g-clean`** で一括掃除する（実体：[scripts/cleanup-merged-branches.sh](../../../scripts/cleanup-merged-branches.sh)）。`[origin/...: gone]` 状態のブランチのみを削除対象とし、未 push のローカル専用ブランチは誤削除されない。現在ブランチが削除対象だった場合は main へ切替・最新化してから削除する
-- マージ方式は **3 種すべて（merge / squash / rebase）許可をデフォルト維持**。PR の性格に応じて使い分ける
 
 ---
 
@@ -65,22 +62,20 @@
 |---|---|
 | `deletion` | main ブランチの削除を禁止 |
 | `non_fast_forward` | main への force-push を禁止 |
-| `pull_request` | main への直接 push を禁止し PR 経由を強制（approvals: 0、stale dismiss: on、3 種のマージ方式すべて許可） |
+| `pull_request` | main への直接 push を禁止し PR 経由を強制（approvals: 0、stale dismiss: on） |
 | `required_status_checks` | `ci-success` チェックが緑でないと PR をマージできない（→ ADR 0030） |
 
 ---
 
-## GitHub Actions（デフォルトから変更したもの）
+## GitHub Actions
 
 | 項目 | 値 | 変更理由 |
 |---|---|---|
 | `default_workflow_permissions` | `read` | `GITHUB_TOKEN` の既定スコープを最小化。書き込みが必要なジョブだけ `permissions:` で明示拡張する方針（→ [.github/workflows/ci.yml](../../../.github/workflows/ci.yml)） |
 
-SHA ピン止めは [ADR 0026](../../adr/0026-github-actions-sha-pinning.md) で慣習化しているが、サーバー側強制（`sha_pinning_required`）は OFF のまま。PR レビューで担保する方針。
-
 ---
 
-## Security（デフォルトから変更したもの）
+## Security
 
 | 機能 | 状態 |
 |---|---|
