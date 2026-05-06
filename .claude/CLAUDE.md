@@ -228,3 +228,16 @@ GitHub OAuth のみ。ローカルでは GitHub OAuth App を別途作成し、`
 - コミットメッセージ・コメントは**日本語**でも英語でもよい（一貫していれば可）
 - IDE の問題タブにエラー・警告があれば適宜修正する
 - lint・型チェック・knip 等のコマンド実行時に警告が出たら、即時修正する（警告を放置しない）
+
+### 設定ファイル形式の優先順位
+
+ツールの設定ファイル形式は以下の優先順位で選ぶ（→ [ADR 0028](../docs/adr/0028-config-file-format-priority.md)）：
+
+1. **ツール強制があればそれに従う**：GitHub Actions / Dependabot / pnpm workspace は YAML 強制
+2. **ツール ecosystem 慣習が確立されていればそれに従う**：Biome → `biome.jsonc` / Turborepo → `turbo.jsonc` / TypeScript → `tsconfig.json`
+3. **自由選択時は以下の優先順位**：
+   - **TS（`.ts`）**：ツールが型を export している場合（syncpack の `RcFile`、commitlint の `UserConfig` 等）。typo を保存時に IDE / `tsc` が即時に弾く
+   - **JSONC（`.jsonc`）**：純データかつ `$schema` が IDE 補完を提供する場合
+   - **YAML（`.yaml`）**：ツール強制 / 慣習以外で選ぶ理由は無い
+
+詳細・判断フローチャート・代替案は [ADR 0028](../docs/adr/0028-config-file-format-priority.md) を参照。
