@@ -39,9 +39,31 @@ const config: RcFile = {
     //   ビルド時は実際のバージョンに置換される。
     // ────────────────────────────────────────────────────────────────
     {
+      // label: 違反検知時に CI ログ・lint 出力に表示される人間向けの説明文。
+      //   どの versionGroup が反応したか即座に判別できるようにする。
       label: "Internal workspace packages must use 'workspace:*'",
+      // packages: このルールを「どの package.json に適用するか」のフィルタ。
+      //   "**" は glob で「全パッケージ」を意味し、以下のすべてを対象にする：
+      //     - ルート package.json（"name": "ai-coding-drill"）
+      //     - apps/* 配下の各パッケージ（@ai-coding-drill/web 等、将来追加分含む）
+      //     - packages/* 配下の各パッケージ（@ai-coding-drill/config 等）
+      //   ルートも含む点に注意：syncpack v15 はワークスペースルートも scan 対象に含める。
+      //   特定パッケージだけに適用したい場合は ["@ai-coding-drill/web"] のように name で指定する。
       packages: ["**"],
+      // dependencies: このルールを「どの依存パッケージ名に適用するか」を指定するフィルタ。
+      //   各 package.json の dependencies / devDependencies / peerDependencies 等に
+      //   書かれたパッケージ名とこのパターンを照合し、マッチしたものだけが pinVersion の
+      //   検証対象になる（マッチしないものは本ルールでは無視）。
+      //   "@ai-coding-drill/**" は「@ai-coding-drill/ で始まるパッケージ名すべて」に
+      //   マッチする minimatch パターンで、モノレポ内部パッケージ（自プロジェクトの
+      //   npm スコープ）のみを対象にする。
+      //   外部 npm パッケージ（react / next / typescript / 別スコープの @types/* 等）は
+      //   このパターンに一致しないため対象外となる（後続の versionGroup 2 で別ルールが適用される）。
       dependencies: ["@ai-coding-drill/**"],
+      // pinVersion: 上記フィルタにマッチした依存を「この値に統一せよ」と強制する。
+      //   "workspace:*" は pnpm/Yarn Berry/Bun が解釈する特殊プロトコルで、
+      //   外部 npm レジストリを一切参照せずローカル workspace を使う宣言。
+      //   dependency confusion 攻撃の構造的防御 + 版追従の保守コストゼロを実現。
       pinVersion: "workspace:*",
     },
 
@@ -55,8 +77,19 @@ const config: RcFile = {
     // ────────────────────────────────────────────────────────────────
     {
       label: "All external dependencies: same version across workspaces",
+      // packages: 全 workspace を対象にする（ルール 1 と同様）。
       packages: ["**"],
+      // dependencies: "**" で「全パッケージ」を対象。ルール 1（@ai-coding-drill/**）が
+      //   先に評価され、内部パッケージは workspace:* で固定されるので、
+      //   ここでは実質的に「外部 npm 依存（react / typescript / 他）」が対象になる。
       dependencies: ["**"],
+      // policy: 値の固定方法を宣言的に指定するキー。
+      //   "sameRange" — 全 workspace で同じ semver 範囲（例：^18.2.0）を要求する。
+      //                 異なるとリント違反として報告される。
+      //   他の選択肢：
+      //     "snappedTo" — 特定の workspace の値に他を合わせる
+      //     "sameRangePinned" — 範囲指定子も完全一致を要求
+      //   sameRange が最も柔軟（個別 workspace で版を上げると syncpack lint が指摘）。
       policy: "sameRange",
     },
   ],
