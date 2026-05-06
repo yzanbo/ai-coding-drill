@@ -17,6 +17,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^20.5.3
         version: 20.5.3
+      '@commitlint/types':
+        specifier: ^20.5.0
+        version: 20.5.0
       lefthook:
         specifier: ^2.1.6
         version: 2.1.6
