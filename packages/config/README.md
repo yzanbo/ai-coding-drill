@@ -1,87 +1,126 @@
 # @ai-coding-drill/config
 
-モノレポ全 workspace で共有する**開発ツール設定の集約パッケージ**。各 `apps/*` および他 `packages/*` がここから設定を `extends` / `import` する形で参照する。
+**ルート直接配置の設定が `extends` で 2 層化を必要とした時のための切り出し先**。
+現状はすべての設定がリポジトリルートで管理されており、本パッケージは**予約状態で空**。
+
+設計判断の根拠：[ADR 0013](../../docs/adr/0013-biome-for-tooling.md) 「設定はリポジトリルートに直接配置、per-workspace 上書きが必要になった時のみ各 workspace に追加して extends する **2 層構造**」
 
 - パッケージ名：`@ai-coding-drill/config`
 - npm 公開しない（`"private": true`）
-- 本パッケージ自身は依存を持たない（設定ファイルの集約のみ）
+- 現状は依存ゼロ・設定ファイルなし（`package.json` のみが存在）
 
 ---
 
-## 役割
+## 役割（2 層構造の Layer 2）
 
-- 全 workspace で**設定の 2 重管理を防ぐ** SSoT
-- ツールごとの共有ルールを 1 箇所で定義し、参照側はそれを `extends` するだけで済む構造を作る
-- 「物理的位置」と「論理的依存」を分離（参照側は `@ai-coding-drill/config` という名前で借りるため、ディレクトリ構成変更の影響を受けない）
+このプロジェクトは設定ファイルを **2 層構造** で管理する：
+
+| 層 | 場所 | 状態 | 適用範囲 |
+|---|---|---|---|
+| **Layer 1（プライマリ）** | リポジトリルート直接配置 | **現状すべての設定がここ** | 全 workspace 一律 |
+| **Layer 2（エスケープハッチ）** | **本パッケージ `packages/config/`** | **現状空（予約状態）** | per-workspace 上書きが必要になった時のみ |
+
+### 現状の Layer 1（参考）
+
+ルート直接配置で運用されている設定群（本パッケージとは別の場所）：
+
+| ファイル | ツール |
+|---|---|
+| `biome.jsonc` | Biome（lint + format） |
+| `commitlint.config.ts` | commitlint（コミットメッセージ規約） |
+| `lefthook.yml` | lefthook（Git フック管理） |
+| `tsconfig.json` | TypeScript（root TS 設定型チェック専用） |
+| `turbo.jsonc` | Turborepo（タスク並列実行・キャッシュ） |
+| `.syncpackrc.ts` | syncpack（package.json 整合性） |
+| `pnpm-workspace.yaml` | pnpm Workspaces |
+
+これらは現状ルート 1 ファイルで全 workspace 共通のルールを表現できているため、Layer 2 への切り出しは未発生。
 
 ---
 
 ## 現状（R0）
 
-`package.json` のみが存在する**ハコだけの状態**。共有が必要となる設定が出てきた段階で、本ディレクトリに集約していく。
+`package.json` のみが存在する**ハコだけの状態**で、設定ファイルは 1 つも入っていない。これは設計通りの状態：
 
-中身が空である理由：
+- すべての設定が Layer 1（ルート直接配置）で管理されている
+- per-workspace 上書きが必要になっていないため、本パッケージへの切り出しは未発生
+- 「**ハコだけ先に置けば、必要になった時に追加するだけで済む**」という設計（[ADR 0018](../../docs/adr/0018-phase-0-tooling-discipline.md) の系譜）
 
-- YAGNI 原則（→ [プロジェクトルート CLAUDE.md「設計原則」](../../.claude/CLAUDE.md)）。`apps/*` がまだ存在しない R0 段階で先取り実装する意味が薄い
-- ハコだけ先に置けば、R1 以降で共有が必要と判明した瞬間に**追加するだけ**で済む（ディレクトリ作成・ワークスペース登録の手間が不要）
-
----
-
-## 追加予定（暫定、実装着手時に確定）
-
-| タイミング | 追加するもの | 用途 |
-|---|---|---|
-| R1（apps 着手時） | `tsconfig/base.json` 等 | `apps/*` が extends する共有 tsconfig |
-| R1（packages 増加時） | `tsconfig/library.json` | `packages/*` が extends する共有 tsconfig |
-| R2 以降 | `vitest/base.ts` 等 | Vitest 共有設定 |
-| 必要時のみ | `biome/base.jsonc` | ルート `biome.jsonc` の切り出し（per-workspace 上書きが増えた場合） |
-
-具体的な追加判断は実装着手時に行う（[ADR 0013](../../docs/adr/0013-biome-for-tooling.md)：「設定はリポジトリルートに直接配置、必要時のみ workspace に追加して extends する 2 層構造」と整合）。
+`apps/*` が R1 で追加されても、それだけでは本パッケージに何も入らない。**「ルート 1 ファイルで表現しきれない workspace 別上書きが必要」になった瞬間**が切り出しのトリガー。
 
 ---
 
-## ファイル追加時の規約
+## 切り出しトリガー（タイミングではなく事象で判断）
+
+以下の事象が発生した時に、Layer 1 → Layer 2 の切り出しを検討する：
+
+| トリガー事象 | 切り出す候補 |
+|---|---|
+| `apps/web` と `apps/api` で **`compilerOptions` が大きく異なる** tsconfig が必要になった | `tsconfig/base.json` + `tsconfig/nextjs.json` + `tsconfig/nestjs.json` |
+| **`packages/*` 配下のライブラリ向け** tsconfig が必要になった（例：`composite: true`、`declaration: true` 等） | `tsconfig/library.json` |
+| **特定 workspace だけ Biome ルール上書き**が必要になった（例：`apps/web` だけ React 系ルールを緩和） | `biome/base.jsonc`（ルートから共通部分を切り出し） |
+| Vitest を導入し、**複数 workspace で共有テスト設定**が必要になった（R2 以降） | `vitest/base.ts` |
+
+**採用しないトリガー**：
+
+- ❌ 「R1 になったら切り出す」のような時間ベース
+- ❌ 「実装着手したら切り出す」のような実装依存
+- ❌ 「将来必要になりそうだから先に切り出す」のような先取り
+
+ルート 1 ファイルで表現できる限りは Layer 1 に留め置き、**事象が発生してから**切り出す。
+
+---
+
+## 切り出し時の規約（実際に追加することになった時のガイド）
 
 ### 命名・配置
 
 - ツールごとにサブディレクトリを切る（`tsconfig/` / `biome/` / `vitest/` 等）
 - ファイル名はケバブケース（→ [プロジェクトルート CLAUDE.md「言語・ツール非依存の規約」](../../.claude/CLAUDE.md)）
-- 用途別の派生（例：`tsconfig/nextjs.json` / `tsconfig/nestjs.json` / `tsconfig/library.json`）はサブディレクトリ内で展開
+- 用途別の派生（例：`tsconfig/nextjs.json` / `tsconfig/nestjs.json`）はサブディレクトリ内で展開
 
 ### 設定ファイル形式
 
-[ADR 0028: 設定ファイル形式の選定方針](../../docs/adr/0028-config-file-format-priority.md) に従い、**自由選択時は TS > JSONC > YAML** の優先順位で選ぶ：
+[ADR 0028: 設定ファイル形式の選定方針](../../docs/adr/0028-config-file-format-priority.md) に従い、自由選択時は **TS > JSONC > YAML** の優先順位：
 
-- 型 export があるツール（Vitest 等）：`.ts` でフィールド typo を保存時に弾く
-- 純データの設定（tsconfig 等）：JSONC（コメント可）
-- ツール強制 / 慣習がある場合（`tsconfig.json` / `biome.jsonc` 等）：それに従う
+- 型 export があるツール（Vitest 等）→ `.ts` でフィールド typo を保存時に弾く
+- 純データ設定（tsconfig 等）→ JSONC（コメント可）
+- ツール強制 / 慣習がある場合（`tsconfig.json` / `biome.jsonc` 等）→ それに従う
 
 ### `package.json` の `exports` フィールド
 
 設定ファイルを追加したら、`package.json` の `exports` で**外から参照可能なエントリポイント**を明示する：
 
 ```jsonc
-// 例（将来）
+// 例：tsconfig を切り出した時
 {
   "name": "@ai-coding-drill/config",
   "exports": {
     "./tsconfig/base": "./tsconfig/base.json",
-    "./tsconfig/nextjs": "./tsconfig/nextjs.json",
-    "./biome/base": "./biome/base.jsonc"
+    "./tsconfig/nextjs": "./tsconfig/nextjs.json"
   }
 }
 ```
 
-`exports` で公開していないファイルは**外から参照されない前提**として扱う（内部ヘルパー等を `src/internal/` に置けば、利用側の意図せぬ依存を防げる）。
+`exports` で公開していないファイルは**外から参照されない前提**として扱う。
+
+### 切り出し作業のセット
+
+切り出し時は以下を**同時に**行う（Layer 1 と Layer 2 の二重管理を避けるため）：
+
+1. ルートの該当ファイルから共通部分を本パッケージに移動
+2. ルートのファイルは「workspace 共通参照」または削除し、各 workspace で `extends` する形に
+3. 該当 workspace の `package.json` に `"@ai-coding-drill/config": "workspace:*"` を追加
+4. 動作確認後、ADR で切り出し判断を記録（例：`ADR 00XX: tsconfig を packages/config に切り出し`）
 
 ---
 
-## 参照のされ方（追加後の想定）
+## 切り出し後の参照例（将来の想定）
 
 ### apps から借りる宣言
 
 ```jsonc
-// apps/web/package.json（将来）
+// apps/web/package.json（将来、tsconfig を切り出した場合）
 {
   "devDependencies": {
     "@ai-coding-drill/config": "workspace:*"
@@ -104,7 +143,7 @@
 }
 ```
 
-### Biome の extends（必要時のみ）
+### Biome の extends
 
 ```jsonc
 // 別 workspace で per-workspace 上書きが必要になった場合
@@ -117,18 +156,20 @@
 
 ## やってはいけないこと
 
-- **同じ設定をルートと `packages/config` に二重管理しない**：ルート直接配置 → `packages/config` への切り出しはどちらか一方で運用する
-- **コードロジック（実行時に動く汎用ヘルパー）を置かない**：本パッケージは「**設定ファイル集約**」が役割。汎用ヘルパーは別パッケージ（例：将来の `packages/utils/`）として作る
+- **同じ設定をルート（Layer 1）と本パッケージ（Layer 2）に二重管理しない**：切り出し時はルート側を必ず更新し、SSoT を分裂させない
+- **per-workspace 上書きが必要ない設定を「念のため」切り出さない**：YAGNI 違反。Layer 1 で済むものは Layer 1 に置き続ける
+- **コードロジック（実行時に動く汎用ヘルパー）を置かない**：本パッケージは「**設定ファイルの切り出し先**」が役割。汎用ヘルパーは別パッケージ（例：将来の `packages/utils/`）として作る
 - **外部 npm に公開しない**：`"private": true` を必ず維持。internal-only スコープ
-- **設定の根拠を ADR に書く前にモノレポ全体へ波及する設定を入れない**：「なぜこの共有設定があるのか」が説明できない状態で全体に影響する変更を加えない
+- **設計判断の根拠を ADR に書く前に切り出さない**：「**なぜ切り出したか / 何を切り出したか**」が説明できない状態で全体に影響する変更を加えない
 
 ---
 
 ## 関連ドキュメント
 
-- [docs/requirements/2-foundation/06-dev-workflow.md](../../docs/requirements/2-foundation/06-dev-workflow.md)：開発フロー全体での `packages/config` の位置づけ
-- [ADR 0012: Turborepo + pnpm workspaces](../../docs/adr/0012-turborepo-pnpm-monorepo.md)：モノレポ構造（`packages/config` を共有設定置き場とする設計）
-- [ADR 0013: Biome を採用](../../docs/adr/0013-biome-for-tooling.md)：「ルート直接配置 / 必要時 packages/config に切り出す 2 層構造」方針
-- [ADR 0028: 設定ファイル形式の選定方針](../../docs/adr/0028-config-file-format-priority.md)：TS > JSONC > YAML の優先順位
-- [ADR 0029: syncpack で package.json 整合性を機械強制](../../docs/adr/0029-syncpack-package-json-consistency.md)：`workspace:*` 強制ルール
+- [ADR 0013: Biome を採用](../../docs/adr/0013-biome-for-tooling.md)：「ルート直接配置 / 必要時 packages/config に切り出す **2 層構造**」を定めた本パッケージの根拠
+- [ADR 0012: Turborepo + pnpm workspaces](../../docs/adr/0012-turborepo-pnpm-monorepo.md)：モノレポ構造（本パッケージの位置づけの基盤）
+- [ADR 0018: 補完ツールを R0 から導入](../../docs/adr/0018-phase-0-tooling-discipline.md)：「ハコだけ先に置く」設計の系譜
+- [ADR 0028: 設定ファイル形式の選定方針](../../docs/adr/0028-config-file-format-priority.md)：TS > JSONC > YAML の優先順位（切り出し時の選定基準）
+- [ADR 0029: syncpack で package.json 整合性を機械強制](../../docs/adr/0029-syncpack-package-json-consistency.md)：`workspace:*` プロトコル強制
+- [docs/requirements/2-foundation/06-dev-workflow.md](../../docs/requirements/2-foundation/06-dev-workflow.md)：開発フロー全体での本パッケージの位置づけ
 - [プロジェクトルート CLAUDE.md](../../.claude/CLAUDE.md)：プロジェクト全体のガイダンス
