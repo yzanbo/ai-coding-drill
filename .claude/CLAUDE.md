@@ -139,7 +139,7 @@ GitHub OAuth のみ。ローカルでは GitHub OAuth App を別途作成し、`
 
 ### コミットメッセージ
 
-- 日本語で記載、commitlint で機械強制（SSoT: [commitlint.config.mjs](../commitlint.config.mjs)）
+- 日本語で記載、commitlint で機械強制（SSoT: [commitlint.config.ts](../commitlint.config.ts)）
 - 形式は `<type>(<scope>): <subject>` / scope 任意 / ヘッダー 100 文字以内 / 本文 1 行 200 文字以内
 - 複数領域はカンマ区切り（例：`feat(api,worker): ...`）
 

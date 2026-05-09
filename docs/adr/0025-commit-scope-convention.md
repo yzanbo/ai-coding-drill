@@ -22,13 +22,13 @@
    - これらを領域 scope と同列の `scope-enum` に登録しないと、Dependabot の自動 PR が commitlint で弾かれて運用が破綻する
 
 3. **scope 定義の SSoT をどこに置くか**
-   - 機械強制は `commitlint.config.mjs` の `scope-enum`
+   - 機械強制は `commitlint.config.ts` の `scope-enum`
    - 人間向けの説明は `.claude/CLAUDE.md`（と過去には PR テンプレート等にも書かれがち）
    - 複数箇所に書くと不可避的にずれが生じる
 
 ## Decision（決定内容）
 
-**scope は列挙制とし、以下 10 種類を `commitlint.config.mjs` の `scope-enum` で機械強制する。`scope-empty` は許容する（リポジトリ横断の変更で scope 不要なケースのため）。**
+**scope は列挙制とし、以下 10 種類を `commitlint.config.ts` の `scope-enum` で機械強制する。`scope-empty` は許容する（リポジトリ横断の変更で scope 不要なケースのため）。**
 
 ### 領域 scope（人間が手動コミット時に選ぶ、8 種）
 
@@ -52,7 +52,7 @@
 
 ### SSoT の所在
 
-- **正（機械強制）**：`commitlint.config.mjs` の `scope-enum`
+- **正（機械強制）**：`commitlint.config.ts` の `scope-enum`
 - **副（人間向け解説）**：`.claude/CLAUDE.md` の scope 表
 - 副を更新する際は必ず正と整合させる。差分は CI（commitlint）が検知する
 
@@ -87,7 +87,7 @@
 - **リポジトリ横断の変更で scope を強制すると違和感が出る**：例えば `chore: lefthook を導入` のような全体に関わる変更で、無理に scope を付けるとミスリードになる
 - **CLAUDE.md のリポジトリ規律変更等もこのケース**
 
-### SSoT を `commitlint.config.mjs` に置く理由
+### SSoT を `commitlint.config.ts` に置く理由
 
 - **commitlint が CI で検証する唯一の真実**：人間が読む `.claude/CLAUDE.md` は説明用の写しに過ぎない
 - **設定ファイルが複数ある場合、機械強制される側を正とする**が原則
@@ -125,7 +125,7 @@
 
 ## References
 
-- [commitlint.config.mjs](../../commitlint.config.mjs)：本 ADR の機械強制実装（SSoT）
+- [commitlint.config.ts](../../commitlint.config.ts)：本 ADR の機械強制実装（SSoT）
 - [.claude/CLAUDE.md](../../.claude/CLAUDE.md)：人間向け scope 表（副 SSoT）
 - [.github/dependabot.yml](../../.github/dependabot.yml)：自動 PR が `include: scope` で `deps` / `deps-dev` を生成する設定
 - [ADR 0018](./0018-phase-0-tooling-discipline.md)：commitlint を R0 から導入
