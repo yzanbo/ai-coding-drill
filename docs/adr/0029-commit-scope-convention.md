@@ -1,4 +1,4 @@
-# 0025. コミット scope 規約（モノレポ領域 + 自動更新用 deps / deps-dev）
+# 0029. コミット scope 規約（モノレポ領域 + 自動更新用 deps / deps-dev）
 
 - **Status**: Accepted
 - **Date**: 2026-05-05
@@ -6,7 +6,7 @@
 
 ## Context（背景・課題）
 
-このリポジトリは Conventional Commits（`type(scope): subject` 形式）を採用し、commitlint で機械強制している（[ADR 0018](./0018-phase-0-tooling-discipline.md)）。
+このリポジトリは Conventional Commits（`type(scope): subject` 形式）を採用し、commitlint で機械強制している（[ADR 0021](./0021-phase-0-tooling-discipline.md)）。
 モノレポ構成上、`scope` を「変更が及んだ領域」を示す識別子として運用する必要があるが、設計時に以下の論点が出た：
 
 1. **scope の選択肢を自由記述にするか、列挙にするか**
@@ -15,7 +15,7 @@
 
 2. **モノレポの「領域」と「依存更新」をどう識別子で区別するか**
    - 領域 scope（`web` / `api` / `worker` / `shared` / `config` / `infra` / `docs` / `db`）はモノレポの作業対象を示す
-   - 一方で [ADR 0024](./0024-dependabot-auto-update-policy.md) で導入した Dependabot は `include: scope` 指定により、依存種別から自動的に scope を生成する：
+   - 一方で [ADR 0028](./0028-dependabot-auto-update-policy.md) で導入した Dependabot は `include: scope` 指定により、依存種別から自動的に scope を生成する：
      - production / github-actions → `(deps)`
      - devDependencies → `(deps-dev)`
      - grouped PR → `(deps)` 固定
@@ -114,7 +114,7 @@
 
 - **新規 workspace 追加時に `scope-enum` 更新が必要**：例えば将来 `apps/admin` を追加する場合、`admin` scope の追加と CLAUDE.md の表更新が同時に必要。これは「忘れたら commit が弾かれる」ので機械的に検知される
 - **Dependabot が将来 scope 命名規則を変えた場合の追従**：例えば `include: scope` の挙動が変更されたり、新しい scope（例：`deps-peer`）が追加された場合、`scope-enum` を更新するまで自動 PR が落ちる
-- **Renovate に移行した場合の差異**：Renovate は scope 自動付与の仕組みが Dependabot とは異なるため、再設計が必要（[ADR 0024](./0024-dependabot-auto-update-policy.md) の見直しトリガーと連動）
+- **Renovate に移行した場合の差異**：Renovate は scope 自動付与の仕組みが Dependabot とは異なるため、再設計が必要（[ADR 0028](./0028-dependabot-auto-update-policy.md) の見直しトリガーと連動）
 
 ### 将来の見直しトリガー
 
@@ -128,6 +128,6 @@
 - [commitlint.config.ts](../../commitlint.config.ts)：本 ADR の機械強制実装（SSoT）
 - [.claude/CLAUDE.md](../../.claude/CLAUDE.md)：人間向け scope 表（副 SSoT）
 - [.github/dependabot.yml](../../.github/dependabot.yml)：自動 PR が `include: scope` で `deps` / `deps-dev` を生成する設定
-- [ADR 0018](./0018-phase-0-tooling-discipline.md)：commitlint を R0 から導入
-- [ADR 0024](./0024-dependabot-auto-update-policy.md)：Dependabot ポリシー（本 ADR の `deps` / `deps-dev` 追加の動機）
+- [ADR 0021](./0021-phase-0-tooling-discipline.md)：commitlint を R0 から導入
+- [ADR 0028](./0028-dependabot-auto-update-policy.md)：Dependabot ポリシー（本 ADR の `deps` / `deps-dev` 追加の動機）
 - [Conventional Commits 公式](https://www.conventionalcommits.org/)：scope の自由度に関する基準

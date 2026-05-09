@@ -1,4 +1,4 @@
-# 0001. ジョブキューに Postgres `SELECT FOR UPDATE SKIP LOCKED` を採用
+# 0004. ジョブキューに Postgres `SELECT FOR UPDATE SKIP LOCKED` を採用
 
 - **Status**: Accepted
 - **Date**: 2026-04-25

@@ -1,4 +1,4 @@
-# 0032. Frontend ホスティングに Vercel を採用（AWS Amplify / S3+CloudFront / ECS Fargate 不採用）
+# 0013. Frontend ホスティングに Vercel を採用（AWS Amplify / S3+CloudFront / ECS Fargate 不採用）
 
 - **Status**: Accepted
 - **Date**: 2026-05-09
@@ -13,7 +13,7 @@
 - 想定トラフィック：数百ユーザー × 数十リクエスト/日（ポートフォリオ規模）
 - コスト目標：Frontend 部分で月 $0
 - ADR 0002 では「Vercel + Fly.io + Supabase 等の SaaS 寄せ集め」を不採用と明記しており、Vercel 単体採用も同方針との整合説明が必要
-- すでに [ADR 0007](./0007-upstash-redis-over-elasticache.md) で Redis に Upstash を採用しており、AWS 単独方針からの「合理的逸脱」の前例がある
+- すでに [ADR 0012](./0012-upstash-redis-over-elasticache.md) で Redis に Upstash を採用しており、AWS 単独方針からの「合理的逸脱」の前例がある
 
 ## Decision（決定内容）
 
@@ -33,7 +33,7 @@
 4. **AWS 単一クラウド方針からの逸脱を「合理的判断」として説明可能**
    - ADR 0002 は **「Vercel + Fly.io + Supabase 等の SaaS 寄せ集め」** を不採用としたが、これは「クラウド選定の見せ場が薄い」「IAM/IaC の練習機会が減る」が主理由
    - 本プロジェクトでは Backend API / 採点ワーカー / DB / シークレット管理など **コアの設計判断は AWS 上で完結**しており、Frontend の単独逸脱はその主理由に抵触しない
-   - ADR 0007（Upstash）と同じく、原則の機械的適用ではなく適合性とコスト効率を優先した明示的判断として README に記録できる
+   - ADR 0012（Upstash）と同じく、原則の機械的適用ではなく適合性とコスト効率を優先した明示的判断として README に記録できる
 5. **将来の戻り道が確保されている**
    - Next.js は Vercel 専用ではないため、必要になれば AWS Amplify / ECS Fargate / Cloudflare Pages へ移行可能
    - Vercel 固有 API（Edge Functions / Image Optimization 等）への依存度を意識的に抑えれば移行コストは低い
@@ -59,7 +59,7 @@
 - 「AWS 一本」を維持しつつ、Frontend の適合性と無料枠を取りに行った合理的判断として README で説明可能
 
 ### 失うもの・受容するリスク
-- 厳密には「AWS 一本」の方針に 2 例目の例外を作っている（1 例目は ADR 0007 Upstash）
+- 厳密には「AWS 一本」の方針に 2 例目の例外を作っている（1 例目は ADR 0012 Upstash）
 - Frontend と Backend で環境変数 / シークレット管理が 2 系統に分かれる（Vercel の env と AWS Secrets Manager / Parameter Store）
 - Vercel 固有 API（Edge Functions / Image Optimization）に依存しすぎると移行コストが膨らむため、利用範囲を意識的に抑える必要がある
 - VPC 内に閉じ込められない（Frontend は public で問題なし、Backend API への通信は HTTPS over TLS）
@@ -74,4 +74,4 @@
 - [02-architecture.md: 物理配置](../requirements/2-foundation/02-architecture.md#物理配置責務分離)
 - [05-runtime-stack.md: デプロイ先](../requirements/2-foundation/05-runtime-stack.md#デプロイ先)
 - [ADR 0002](./0002-aws-single-cloud.md)：AWS 単独方針
-- [ADR 0007](./0007-upstash-redis-over-elasticache.md)：AWS 単独方針からの 1 例目の例外（Upstash）
+- [ADR 0012](./0012-upstash-redis-over-elasticache.md)：AWS 単独方針からの 1 例目の例外（Upstash）

@@ -225,12 +225,12 @@ sequenceDiagram
 
 | 段階 | キーポイント |
 |---|---|
-| ① 解答受付 | INSERT submissions + INSERT jobs + NOTIFY を **同一トランザクション**で実行 → Outbox パターン不要、二重書き込み問題なし（[ADR 0001](../../adr/0001-postgres-as-job-queue.md)） |
+| ① 解答受付 | INSERT submissions + INSERT jobs + NOTIFY を **同一トランザクション**で実行 → Outbox パターン不要、二重書き込み問題なし（[ADR 0004](../../adr/0004-postgres-as-job-queue.md)） |
 | ② ジョブ取得 | 行ロックは **短時間で COMMIT**。Docker 実行中はロックを握らない（スタックジョブ防止） |
-| ③ サンドボックス採点 | **使い捨てコンテナ**：1 ジョブ 1 コンテナ、実行後即破棄。前回実行の影響が残らない（[ADR 0008](../../adr/0008-disposable-sandbox-container.md)） |
+| ③ サンドボックス採点 | **使い捨てコンテナ**：1 ジョブ 1 コンテナ、実行後即破棄。前回実行の影響が残らない（[ADR 0009](../../adr/0009-disposable-sandbox-container.md)） |
 | ④ 結果書き戻し | jobs.state='done' と submissions.status='graded' を別トランザクションで更新。冪等性のため UPDATE は ID 指定で安全 |
 
-**`trace_id` の連結**：①〜④ の全段階を単一トレースで可視化するため、ジョブペイロードに W3C Trace Context を埋め込む（[ADR 0017](../../adr/0017-w3c-trace-context-in-job-payload.md)）。
+**`trace_id` の連結**：①〜④ の全段階を単一トレースで可視化するため、ジョブペイロードに W3C Trace Context を埋め込む（[ADR 0010](../../adr/0010-w3c-trace-context-in-job-payload.md)）。
 
 ---
 
@@ -304,7 +304,7 @@ flowchart LR
 
 | コンポーネント | 配置 | 採用理由 |
 |---|---|---|
-| Frontend | Vercel（エッジ CDN） | Next.js とのファーストパーティ統合、無料枠、SSR + 静的配信のグローバル分散（→ [ADR 0032](../../adr/0032-vercel-for-frontend-hosting.md)） |
+| Frontend | Vercel（エッジ CDN） | Next.js とのファーストパーティ統合、無料枠、SSR + 静的配信のグローバル分散（→ [ADR 0013](../../adr/0013-vercel-for-frontend-hosting.md)） |
 | Backend API | ECS Fargate（マネージドコンテナ） | 軽量・水平スケール、Docker 操作不要、最小タスク 1 で cold start 回避 |
 | 採点ワーカー | EC2 専用 VM | **Docker Engine が必要**、`docker.sock` 操作権限を API から分離（最小権限原則） |
 | DB（兼ジョブキュー） | RDS PostgreSQL | 永続化、バックアップ、PITR、無料枠活用 |

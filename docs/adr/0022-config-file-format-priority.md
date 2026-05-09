@@ -1,4 +1,4 @@
-# 0028. 設定ファイル形式の選定方針（TS > JSONC > YAML の優先順位）
+# 0022. 設定ファイル形式の選定方針（TS > JSONC > YAML の優先順位）
 
 - **Status**: Accepted
 - **Date**: 2026-05-06
@@ -19,7 +19,7 @@
 | `turbo.jsonc` | JSONC | Turborepo の慣習 |
 | `commitlint.config.mjs` ※ | MJS | 自由選択（JS / TS / JSON / YAML 可） |
 
-> ※ 上記テーブルは**本 ADR を起票した時点のスナップショット**である。本 ADR の Decision「即時適用」により、本 PR で `commitlint.config.mjs` は `commitlint.config.ts` に変換され、ADR 0028 の方針が第 1 例として実適用される。詳細は後述の「本 ADR の即時適用」を参照。
+> ※ 上記テーブルは**本 ADR を起票した時点のスナップショット**である。本 ADR の Decision「即時適用」により、本 PR で `commitlint.config.mjs` は `commitlint.config.ts` に変換され、ADR 0022 の方針が第 1 例として実適用される。詳細は後述の「本 ADR の即時適用」を参照。
 
 ツール側の制約は 3 種類に分けられる：
 
@@ -245,6 +245,6 @@ ecosystem 慣習に逆らう労力 vs 拡張子変更の利点を比較すると
 
 - [.claude/CLAUDE.md](../../.claude/CLAUDE.md)：本方針の運用ガイド（簡潔版）
 - [docs/requirements/2-foundation/06-dev-workflow.md](../requirements/2-foundation/06-dev-workflow.md)：開発フロー・品質保証技術の俯瞰
-- [ADR 0013: Biome を採用](./0013-biome-for-tooling.md)：JSONC を採用した先例
-- [ADR 0018: 補完ツールを R0 から導入](./0018-phase-0-tooling-discipline.md)：個別ツール導入の方針
+- [ADR 0018: Biome を採用](./0018-biome-for-tooling.md)：JSONC を採用した先例
+- [ADR 0021: 補完ツールを R0 から導入](./0021-phase-0-tooling-discipline.md)：個別ツール導入の方針
 - `commitlint.config.ts`：本 ADR の方針が適用された具体例（本 PR で `.mjs` から変換）

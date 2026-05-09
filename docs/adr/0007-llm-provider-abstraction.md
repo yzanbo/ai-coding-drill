@@ -1,4 +1,4 @@
-# 0011. LLM プロバイダ抽象化戦略（特定モデルへの依存を排除する）
+# 0007. LLM プロバイダ抽象化戦略（特定モデルへの依存を排除する）
 
 - **Status**: Accepted
 - **Date**: 2026-04-25
@@ -97,5 +97,5 @@ providers:
 
 - [03-llm-pipeline.md: モデル選定ポリシー](../requirements/2-foundation/03-llm-pipeline.md)
 - [05-runtime-stack.md: LLM](../requirements/2-foundation/05-runtime-stack.md#llm)
-- [ADR 0009: LLM-as-a-Judge を自前実装](./0009-custom-llm-judge.md)
-- [ADR 0010: 言語の段階導入](./0010-phased-language-introduction.md)
+- [ADR 0008: LLM-as-a-Judge を自前実装](./0008-custom-llm-judge.md)
+- [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)

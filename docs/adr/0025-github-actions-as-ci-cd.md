@@ -1,4 +1,4 @@
-# 0023. CI/CD ツールに GitHub Actions を採用
+# 0025. CI/CD ツールに GitHub Actions を採用
 
 - **Status**: Accepted
 - **Date**: 2026-05-05
@@ -6,7 +6,7 @@
 
 ## Context（背景・課題）
 
-[ADR 0022](./0022-github-actions-incremental-scope.md) で「CI のスコープを段階拡張する」という方針は決めたが、**そもそもどの CI/CD ツールを採用するか** という選定判断自体は明文化されていない。
+[ADR 0026](./0026-github-actions-incremental-scope.md) で「CI のスコープを段階拡張する」という方針は決めたが、**そもそもどの CI/CD ツールを採用するか** という選定判断自体は明文化されていない。
 
 CI/CD ツールは大きく以下の三類型に分かれる：
 
@@ -26,7 +26,7 @@ CI/CD ツールは大きく以下の三類型に分かれる：
 
 **CI/CD ツールに GitHub Actions を採用する。** デプロイ（CD）部分も当面は GitHub Actions 上で完結させる。
 
-- ワークフローは `.github/workflows/` 配下に配置し、SSoT は `ci.yml`（[ADR 0022](./0022-github-actions-incremental-scope.md)）
+- ワークフローは `.github/workflows/` 配下に配置し、SSoT は `ci.yml`（[ADR 0026](./0026-github-actions-incremental-scope.md)）
 - ランナーは `ubuntu-latest`（GitHub-hosted）を既定とする
 - AWS への認証は `aws-actions/configure-aws-credentials` で OIDC を使う（長期 IAM キーをシークレットに保存しない）
 - 個別領域で専用ツールに切り出す可能性は将来再評価する（下記「将来の見直しトリガー」）
@@ -87,8 +87,8 @@ CI/CD ツールは大きく以下の三類型に分かれる：
 ## References
 
 - [ADR 0002](./0002-aws-single-cloud.md)：AWS 単独クラウドの前提
-- [ADR 0018](./0018-phase-0-tooling-discipline.md)：補完ツールを R0 から導入
-- [ADR 0022](./0022-github-actions-incremental-scope.md)：CI スコープの段階拡張方針（本 ADR の前提）
+- [ADR 0021](./0021-phase-0-tooling-discipline.md)：補完ツールを R0 から導入
+- [ADR 0026](./0026-github-actions-incremental-scope.md)：CI スコープの段階拡張方針（本 ADR の前提）
 - [.github/workflows/ci.yml](../../.github/workflows/ci.yml)：本 ADR の実装
 - [GitHub Actions の料金体系](https://docs.github.com/ja/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions)
 - [`aws-actions/configure-aws-credentials`（OIDC 連携）](https://github.com/aws-actions/configure-aws-credentials)

@@ -1,4 +1,4 @@
-# 0009. LLM-as-a-Judge を自前実装（DeepEval / Ragas に依存しない）
+# 0008. LLM-as-a-Judge を自前実装（DeepEval / Ragas に依存しない）
 
 - **Status**: Accepted
 - **Date**: 2026-04-25
@@ -24,7 +24,7 @@ LLM-as-a-Judge は **NestJS の `GenerationModule` 内で自前実装**する。
    - 「LLM 出力をどう評価するか」の設計判断を自前実装で語れる方が、フレームワーク呼び出しコードを見せるより訴求力が高い
    - 評価軸（明確さ・網羅性・難易度・教育的価値・独自性）の設計を自分の判断として説明できる
 2. **MVP の TS スタックに統一できる**
-   - Ragas / DeepEval は Python 前提で、MVP に Python を持ち込むと言語の段階導入（→ ADR 0010）と矛盾
+   - Ragas / DeepEval は Python 前提で、MVP に Python を持ち込むと言語の段階導入（→ ADR 0003）と矛盾
    - NestJS の `GenerationModule` 内で完結し、R7 まで Python 依存を遅延できる
 3. **用途のミスマッチ**
    - Ragas は RAG 評価特化で問題生成評価には合わない
@@ -36,7 +36,7 @@ LLM-as-a-Judge は **NestJS の `GenerationModule` 内で自前実装**する。
    - DeepEval の G-Eval 等の優れた手法は参考にできるため、自前実装でも先行研究の知見を取り込める
    - 完全な車輪の再発明ではなく、依存関係を持たずにベストプラクティスを採り入れる構造
 6. **観測性スタックとの整合**
-   - LangSmith / LangFuse の SaaS 観測性は、OpenTelemetry + 自前メトリクス（→ ADR 0011）で代替可能
+   - LangSmith / LangFuse の SaaS 観測性は、OpenTelemetry + 自前メトリクス（→ ADR 0007）で代替可能
 
 ## Alternatives Considered（検討した代替案）
 

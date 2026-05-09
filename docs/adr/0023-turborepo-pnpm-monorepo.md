@@ -1,4 +1,4 @@
-# 0012. モノレポツールに Turborepo + pnpm workspaces を採用
+# 0023. モノレポツールに Turborepo + pnpm workspaces を採用
 
 - **Status**: Accepted
 - **Date**: 2026-04-25
@@ -11,7 +11,7 @@
 - パッケージ数想定：
   - **MVP（R1〜R5）**：5〜10 個（apps × 3、packages × 数個、infra）
   - **R7（RAG・評価パイプライン追加後）**：8〜12 個（Python アプリ × 1〜2 を追加）
-- 言語構成（[ADR 0010](./0010-phased-language-introduction.md)）：
+- 言語構成（[ADR 0003](./0003-phased-language-introduction.md)）：
   - MVP：TypeScript + Go
   - R7：上記 + Python
 - 共有スキーマ（JSON Schema）を TS / Go / Python の 3 言語で参照したい
@@ -109,7 +109,7 @@ ai-coding-drill/
 │   └── eval-pipeline/          ← Python バッチ（R7）
 ├── packages/
 │   ├── config/
-│   │   └── tsconfig/           ← 共有 tsconfig（Biome 設定はリポジトリルート biome.jsonc に直接配置 → ADR 0013）
+│   │   └── tsconfig/           ← 共有 tsconfig（Biome 設定はリポジトリルート biome.jsonc に直接配置 → ADR 0018）
 │   ├── shared-types/           ← JSON Schema を SSoT、各言語向け型生成
 │   │   ├── schemas/            ← JSON Schema（SSoT）
 │   │   ├── generated/          ← ts/（コミット）, go/（gitignore）, python/（gitignore）
@@ -134,8 +134,8 @@ ai-coding-drill/
 
 - 各アプリ直下に `Dockerfile` を配置（ビルドコンテキスト最小化、アプリごとに独立 CI ビルド可能）
 - 共有環境変数はルートの `.env.example`、アプリ固有変数は各アプリ直下の `.env.example`
-- 共有スキーマは [ADR 0014](./0014-json-schema-as-single-source-of-truth.md) に従い JSON Schema を SSoT として各言語向け型を自動生成
-- TS のコード品質ツールは [ADR 0013](./0013-biome-for-tooling.md) に従い Biome に統一
+- 共有スキーマは [ADR 0006](./0006-json-schema-as-single-source-of-truth.md) に従い JSON Schema を SSoT として各言語向け型を自動生成
+- TS のコード品質ツールは [ADR 0018](./0018-biome-for-tooling.md) に従い Biome に統一
 
 ## Alternatives Considered（検討した代替案）
 
@@ -191,7 +191,7 @@ ai-coding-drill/
 ## References
 
 - [05-runtime-stack.md: モノレポ構成](../requirements/2-foundation/05-runtime-stack.md)
-- [ADR 0010: 言語の段階導入](./0010-phased-language-introduction.md)
+- [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)
 - [Turborepo 公式](https://turborepo.com/)
 - [pnpm workspaces 公式](https://pnpm.io/workspaces)
 - [uv 公式](https://docs.astral.sh/uv/)

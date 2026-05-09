@@ -1,4 +1,4 @@
-# 0021. Python のコード品質ツールに ruff を採用、型チェッカーは R7 着手時に決定
+# 0020. Python のコード品質ツールに ruff を採用、型チェッカーは R7 着手時に決定
 
 - **Status**: Accepted
 - **Date**: 2026-04-25
@@ -6,7 +6,7 @@
 
 ## Context（背景・課題）
 
-Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関連で導入する予定（→ [ADR 0010: 言語の段階導入](./0010-phased-language-introduction.md)）。R7 着手時に必要となる Python 側のコード品質ツール（フォーマット・lint・型チェック）を **MVP 段階で方針だけ確定**し、確定が困難な部分は判断時まで遅延させる。
+Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関連で導入する予定（→ [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)）。R7 着手時に必要となる Python 側のコード品質ツール（フォーマット・lint・型チェック）を **MVP 段階で方針だけ確定**し、確定が困難な部分は判断時まで遅延させる。
 
 - Python は R7（R7）以降で利用、MVP では未使用
 - 「3 言語に等価な品質ゲートを設計した」と語れる構成にしたい
@@ -15,9 +15,9 @@ Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関
 
 関連：
 
-- TS の品質ツール → [ADR 0013](./0013-biome-for-tooling.md)
-- Go の品質ツール → [ADR 0020](./0020-go-code-quality.md)
-- 「可逆な判断は遅延させる」原則 → [ADR 0011: LLM プロバイダ抽象化](./0011-llm-provider-abstraction.md)
+- TS の品質ツール → [ADR 0018](./0018-biome-for-tooling.md)
+- Go の品質ツール → [ADR 0019](./0019-go-code-quality.md)
+- 「可逆な判断は遅延させる」原則 → [ADR 0007: LLM プロバイダ抽象化](./0007-llm-provider-abstraction.md)
 
 ## Decision（決定内容）
 
@@ -40,12 +40,12 @@ Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関
 3. **エコシステム集中**
    - ruff 単体で `flake8-bugbear` / `pyupgrade` / `pylint` 系ルール群を吸収、依存ツリーが薄い
 4. **Astral エコシステム統合の余地**
-   - ruff / uv / ty が同社製で連携する将来性に賭ける（パッケージ管理の `uv` も R7 で採用予定 → [ADR 0012](./0012-turborepo-pnpm-monorepo.md)）
+   - ruff / uv / ty が同社製で連携する将来性に賭ける（パッケージ管理の `uv` も R7 で採用予定 → [ADR 0023](./0023-turborepo-pnpm-monorepo.md)）
 
 ### なぜ型チェッカー選定を R7 まで遅延するか
 
 1. **「可逆な判断は遅延させ、判断時に最良を選ぶ」原則**
-   - LLM プロバイダ抽象化（→ [ADR 0011](./0011-llm-provider-abstraction.md)）と同じ原則
+   - LLM プロバイダ抽象化（→ [ADR 0007](./0007-llm-provider-abstraction.md)）と同じ原則
    - 型チェッカーは R7 で初めて Python コードが書かれる時点まで「使わない」状態が続く
 2. **2026 年初頭時点で ty が成熟途上**
    - ty が Stable に達していれば Astral 統合（ruff / uv / ty）の美しさを採れる
@@ -100,9 +100,9 @@ Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関
 ## References
 
 - [05-runtime-stack.md: コード品質ツール](../requirements/2-foundation/05-runtime-stack.md)
-- [ADR 0013: TypeScript のコード品質ツール](./0013-biome-for-tooling.md)
-- [ADR 0020: Go のコード品質ツール](./0020-go-code-quality.md)
-- [ADR 0010: 言語の段階導入](./0010-phased-language-introduction.md)
-- [ADR 0011: LLM プロバイダ抽象化（"可逆な判断は遅延させる" 原則）](./0011-llm-provider-abstraction.md)
+- [ADR 0018: TypeScript のコード品質ツール](./0018-biome-for-tooling.md)
+- [ADR 0019: Go のコード品質ツール](./0019-go-code-quality.md)
+- [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)
+- [ADR 0007: LLM プロバイダ抽象化（"可逆な判断は遅延させる" 原則）](./0007-llm-provider-abstraction.md)
 - [Astral（ruff / uv / ty）](https://astral.sh/)
 - [pyright 公式](https://github.com/microsoft/pyright)

@@ -85,9 +85,9 @@
 ## データベース
 
 - **PostgreSQL 16**
-- ORM / マイグレーション：**Drizzle ORM**（→ [ADR 0016](../../adr/0016-drizzle-orm-over-prisma.md)）
-  - 選定理由・代替案・トレードオフは ADR 0016 に集約
-  - ジョブキュー利用との整合は [ADR 0001](../../adr/0001-postgres-as-job-queue.md) を参照
+- ORM / マイグレーション：**Drizzle ORM**（→ [ADR 0017](../../adr/0017-drizzle-orm-over-prisma.md)）
+  - 選定理由・代替案・トレードオフは ADR 0017 に集約
+  - ジョブキュー利用との整合は [ADR 0004](../../adr/0004-postgres-as-job-queue.md) を参照
 - 用途：アプリデータ（users, problems, submissions）+ ジョブキュー（`jobs` テーブル）
 
 ---
@@ -113,7 +113,7 @@
 - 切替候補：Anthropic Claude / Google Gemini / OpenAI / OpenRouter（DeepSeek・Llama 等を含む）/ 自前ホスティング
 - 抽象化レイヤに集約する責務：構造化出力の正規化、キャッシュ、コスト計測、観測性スパン、リトライ・フォールバック
 - 具体的なモデル選定は MVP 実装着手時に決定し、R2 以降にベンチマークと運用ログに基づいて適時更新
-- 詳細は [ADR 0011: LLM プロバイダ抽象化戦略](../../adr/0011-llm-provider-abstraction.md)
+- 詳細は [ADR 0007: LLM プロバイダ抽象化戦略](../../adr/0007-llm-provider-abstraction.md)
 
 ### 想定ライブラリ
 - `@anthropic-ai/sdk`（Anthropic 採用時）
@@ -124,7 +124,7 @@
 ### LLM-as-a-Judge
 - 自前実装（NestJS の `GenerationModule` 内、多軸スコアリング）
 - 既存フレームワーク（DeepEval の `G-Eval` 等）は参考にするが、問題生成ドメインに特化した自前評価器を採用
-- 理由：評価ロジック自体がポートフォリオの差別化軸、フレームワーク依存を避ける（[ADR 0009](../../adr/0009-custom-llm-judge.md)）
+- 理由：評価ロジック自体がポートフォリオの差別化軸、フレームワーク依存を避ける（[ADR 0008](../../adr/0008-custom-llm-judge.md)）
 - 生成モデルと Judge モデルは別プロバイダ・別モデルにする（自己評価バイアス回避）
 
 ---
@@ -139,7 +139,7 @@
   - 段階 2（R3）：gVisor（runsc ランタイム）
   - 段階 3（R9、任意）：Firecracker microVM
 - 言語アダプタ層を抽象化し、将来的な Python・他言語追加に備える
-- R7 以降で追加される実装ディレクトリ（`apps/rag-worker/`、`apps/eval-pipeline/`、`notebooks/` 等）の構成は [ADR 0012: 想定ディレクトリ構成](../../adr/0012-turborepo-pnpm-monorepo.md#想定ディレクトリ構成) を SSoT として参照
+- R7 以降で追加される実装ディレクトリ（`apps/rag-worker/`、`apps/eval-pipeline/`、`notebooks/` 等）の構成は [ADR 0023: 想定ディレクトリ構成](../../adr/0023-turborepo-pnpm-monorepo.md#想定ディレクトリ構成) を SSoT として参照
 
 → 使い捨てコンテナ方式の根拠と隔離設計は [02-architecture.md: サンドボックスランナー](./02-architecture.md#サンドボックスランナーgo-ワーカー内で実行)
 
@@ -164,7 +164,7 @@
 
 | コンポーネント | サービス | 備考 |
 |---|---|---|
-| Frontend | Vercel | Next.js とのファーストパーティ統合、無料枠（→ [ADR 0032](../../adr/0032-vercel-for-frontend-hosting.md)） |
+| Frontend | Vercel | Next.js とのファーストパーティ統合、無料枠（→ [ADR 0013](../../adr/0013-vercel-for-frontend-hosting.md)） |
 | Backend API | ECS Fargate（最小タスク 1） | cold start 回避 |
 | 採点ワーカー | EC2 t4g.small | Docker Engine + Go バイナリ。gVisor/Firecracker 拡張のため |
 | DB（兼ジョブキュー） | RDS PostgreSQL（db.t4g.micro） | 無料枠活用 |
