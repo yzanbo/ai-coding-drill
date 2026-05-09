@@ -31,7 +31,7 @@
 4. **エコシステム・情報量の優位**
    - Terraform モジュール・Claude Code のサポート・公式ドキュメントが AWS で最も厚い
    - トラブル時の調査コストが最小
-5. **Phase 7 での部分併用余地は残す**
+5. **R7 での部分併用余地は残す**
    - Vertex AI / BigQuery が必要になった場合は「その範囲だけ GCP」と限定すれば、原則と整合した拡張が可能
    - 最初から二系統に分けるより、必要箇所だけ追加する方が判断順序として健全
 
@@ -60,7 +60,7 @@
 - **「AWS 単独」の原則は維持しつつ、適合性とコスト効率の観点から個別に正当化された逸脱を 2 つ受け入れている**：Redis ホスティングの Upstash（[ADR 0007](./0007-upstash-redis-over-elasticache.md)）と Frontend ホスティングの Vercel（[ADR 0032](./0032-vercel-for-frontend-hosting.md)）。Backend API / 採点ワーカー / DB / IAM / 観測性のコア設計はすべて AWS 上で完結している
 
 ### 将来の見直しトリガー
-- Phase 7（Python 評価・分析パイプライン）で GCP の Vertex AI / BigQuery を活用したくなった場合は、その範囲だけ GCP を併用する余地を残す
+- R7（Python 評価・分析パイプライン）で GCP の Vertex AI / BigQuery を活用したくなった場合は、その範囲だけ GCP を併用する余地を残す
 - AWS の特定サービスでコストが大幅に膨らんだ場合
 
 ## References

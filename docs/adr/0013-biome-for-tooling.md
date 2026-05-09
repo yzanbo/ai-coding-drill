@@ -10,7 +10,7 @@ TypeScript のリンタ・フォーマッタ選定と、モノレポにおける
 
 - TypeScript は本プロジェクトの主言語（フロント / バックエンドの 2 アプリ + 共有パッケージ群）
 - ESLint + Prettier の組み合わせは設定ファイル乱立・実行速度・依存ツリーの肥大化が常態化している
-- モノレポ規模：MVP で 5〜10 パッケージ、Phase 7 で 8〜12 パッケージ
+- モノレポ規模：MVP で 5〜10 パッケージ、R7 で 8〜12 パッケージ
 - CI 時間を抑えたい
 - 「3 言語に等価な品質ゲートを設計した」と語れる構成にしたい（Go / Python の同様 ADR は別ファイル）
 
@@ -103,7 +103,7 @@ TypeScript のリンタ・フォーマッタ選定と、モノレポにおける
 - [05-runtime-stack.md: コード品質ツール](../requirements/2-foundation/05-runtime-stack.md)
 - [ADR 0020: Go のコード品質ツール](./0020-go-code-quality.md)
 - [ADR 0021: Python のコード品質ツール](./0021-python-code-quality.md)
-- [ADR 0018: Phase 0 ツール導入規律](./0018-phase-0-tooling-discipline.md)
+- [ADR 0018: R0 ツール導入規律](./0018-phase-0-tooling-discipline.md)
 - [biome.jsonc](../../biome.jsonc) — 統合後の設定本体
 - [turbo.jsonc](../../turbo.jsonc) — lint / format を Turbo 非経由とする方針コメント
 - [Biome 公式](https://biomejs.dev/)
