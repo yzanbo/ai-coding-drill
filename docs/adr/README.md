@@ -1,6 +1,6 @@
 # Architecture Decision Records（ADR）
 
-重要な技術・設計判断を **1 ファイル 1 決定 / Append-only** で記録するディレクトリ。
+重要な技術・設計判断を **1 ファイル 1 決定** で記録するディレクトリ。判断が変わった時は本文を直接書き換えて最新状態に保つ（履歴は git log で辿れる）。
 
 ## 目的
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 📚 カテゴリ別索引（28 件）
+## 📚 カテゴリ別索引（31 件）
 
 採用担当者・面接官の方は、興味のある観点から該当 ADR を探せます。
 
@@ -69,6 +69,7 @@
 | [0026](./0026-github-actions-sha-pinning.md) | GitHub Actions のサードパーティアクションを SHA でピン止め（タグ書き換え攻撃対策） | サプライチェーン攻撃耐性 / fail-closed / Dependabot 前提 |
 | [0027](./0027-commitlint-base-commit-fetch.md) | commitlint の base コミット取得を iterative deepen 方式で行う（GitHub Git プロトコル非互換回避） | shallow-exclude 不可 / `--deepen=20` ループ / 累積コミット数非依存 |
 | [0028](./0028-config-file-format-priority.md) | 設定ファイル形式の選定方針（自由選択時は TS > JSONC > YAML の優先順位） | ツール強制 / ecosystem 慣習 / 型安全 |
+| [0029](./0029-syncpack-package-json-consistency.md) | モノレポ内 package.json の整合性を syncpack で機械強制（versionGroups / semverGroups の最小限ルールセット） | sameRange / `^` 統一 / workspace:* 強制 / `.ts` 設定で型安全 |
 | [0030](./0030-ci-success-umbrella-job.md) | CI Required status checks を集約ジョブ `ci-success` で 1 本化（umbrella job パターン） | Ruleset 不変 / `needs.*.result` / `if: always()` |
 | [0031](./0031-github-repository-settings.md) | GitHub リポジトリ設定の方針（ブランチ保護 / マージ動作 / Actions / Security / Features） | デフォルト値棚卸し / 機械強制最大化 / 1 人運用前提 |
 
@@ -76,7 +77,7 @@
 
 ## 📝 連番一覧（時系列）
 
-書かれた順序で全 30 件を一覧する場合：
+書かれた順序で全 31 件を一覧する場合：
 
 | # | タイトル | カテゴリ |
 |---|---|---|
@@ -108,6 +109,7 @@
 | [0026](./0026-github-actions-sha-pinning.md) | GitHub Actions のサードパーティアクションを SHA でピン止め | 📋 開発規律 |
 | [0027](./0027-commitlint-base-commit-fetch.md) | commitlint の base コミット取得を iterative deepen 方式で行う | 📋 開発規律 |
 | [0028](./0028-config-file-format-priority.md) | 設定ファイル形式の選定方針（TS > JSONC > YAML の優先順位） | 📋 開発規律 |
+| [0029](./0029-syncpack-package-json-consistency.md) | モノレポ内 package.json の整合性を syncpack で機械強制 | 📋 開発規律 |
 | [0030](./0030-ci-success-umbrella-job.md) | CI Required status checks を集約ジョブ ci-success で 1 本化 | 📋 開発規律 |
 | [0031](./0031-github-repository-settings.md) | GitHub リポジトリ設定の方針（Ruleset / マージ動作 / Actions / Security / Features） | 📋 開発規律 |
 
@@ -119,7 +121,7 @@
 
 | リリース | 主な参照 ADR |
 |---|---|
-| **R0** 基盤整備 | [0012](./0012-turborepo-pnpm-monorepo.md) / [0013](./0013-biome-for-tooling.md) / [0014](./0014-json-schema-as-single-source-of-truth.md) / [0018](./0018-phase-0-tooling-discipline.md) / [0022](./0022-github-actions-incremental-scope.md) / [0023](./0023-github-actions-as-ci-cd.md) / [0024](./0024-dependabot-auto-update-policy.md) / [0025](./0025-commit-scope-convention.md) / [0026](./0026-github-actions-sha-pinning.md) / [0027](./0027-commitlint-base-commit-fetch.md) / [0028](./0028-config-file-format-priority.md) / [0030](./0030-ci-success-umbrella-job.md) / [0031](./0031-github-repository-settings.md) |
+| **R0** 基盤整備 | [0012](./0012-turborepo-pnpm-monorepo.md) / [0013](./0013-biome-for-tooling.md) / [0014](./0014-json-schema-as-single-source-of-truth.md) / [0018](./0018-phase-0-tooling-discipline.md) / [0022](./0022-github-actions-incremental-scope.md) / [0023](./0023-github-actions-as-ci-cd.md) / [0024](./0024-dependabot-auto-update-policy.md) / [0025](./0025-commit-scope-convention.md) / [0026](./0026-github-actions-sha-pinning.md) / [0027](./0027-commitlint-base-commit-fetch.md) / [0028](./0028-config-file-format-priority.md) / [0029](./0029-syncpack-package-json-consistency.md) / [0030](./0030-ci-success-umbrella-job.md) / [0031](./0031-github-repository-settings.md) |
 | **R1** MVP（最小貫通） | [0001](./0001-postgres-as-job-queue.md) / [0003](./0003-codemirror-over-monaco.md) / [0004](./0004-nestjs-for-backend.md) / [0005](./0005-go-for-grading-worker.md) / [0008](./0008-disposable-sandbox-container.md) / [0011](./0011-llm-provider-abstraction.md) / [0015](./0015-github-oauth-with-extensible-design.md) / [0016](./0016-drizzle-orm-over-prisma.md) / [0017](./0017-w3c-trace-context-in-job-payload.md) |
 | **R2** 品質保証パイプライン | [0009](./0009-custom-llm-judge.md) / [0011](./0011-llm-provider-abstraction.md) |
 | **R3** サンドボックス強化 | [0008](./0008-disposable-sandbox-container.md) |
@@ -157,12 +159,11 @@
 - `Deprecated`：もう使っていないが履歴として残す
 - `Superseded by NNNN`：別の ADR で上書きされた
 
-### 不変性
+### 更新方針
 
-- 一度 `Accepted` した ADR は **本文を書き換えない**
-- 変更したい場合は新しい ADR を作って前の ADR の `Status` を `Superseded by NNNN` に更新する
-- 履歴の Append-only を徹底する
-- 補足情報（実装着手後の知見等）は本文末尾に「補足（YYYY-MM-DD 追加）」セクションとして追記可能（[ADR 0017](./0017-w3c-trace-context-in-job-payload.md) の補足参照）
+- ADR 本文は**いつでも書き換え可能**。判断が変わったら最新状態に直接反映し、ドキュメントを「現時点の答え」として保つ
+- 過去の判断履歴を辿りたい場合は `git log -p docs/adr/<file>.md` で参照する（書き換え時に判断の根拠・経緯はコミットメッセージに残す）
+- 別の ADR で**完全に置き換えられた**場合のみ `Status` を `Superseded by NNNN` に更新する（リネーム / 統合 / 廃止など、ファイル自体を残しつつ無効化したい時）
 
 ### 書くタイミング
 

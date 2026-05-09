@@ -30,7 +30,7 @@
 
 **補完ツール（Knip / lefthook / commitlint / syncpack）を Phase 0（リポジトリ初期セットアップ時）から導入する。**
 
-- 設定は `packages/config/` 配下に集約し、各アプリ・パッケージから参照
+- 設定の物理配置：本 ADR で扱う補完ツール（Knip / lefthook / commitlint / syncpack）はすべてリポジトリルート直接配置。詳細な配置方針は [packages/config/README.md](../../packages/config/README.md) を参照
 - lefthook の pre-commit フックで Biome / 型チェックを起動
 - lefthook の commit-msg フックで commitlint を起動
 - Knip / syncpack は CI（GitHub Actions）でも実行し、PR レベルで違反を弾く

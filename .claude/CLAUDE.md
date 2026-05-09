@@ -26,7 +26,7 @@
 | `apps/grading-worker/` | 採点ワーカー（Postgres ジョブを取得して Docker で実行） | Go |
 | `packages/shared-types/` | JSON Schema を SSoT、TS/Go/Python 向けに型を自動生成 | — |
 | `packages/prompts/` | LLM プロンプト（YAML、バージョン管理） | — |
-| `packages/config/` | Biome / TSConfig 共有設定 | — |
+| `packages/config/` | 多消費者前提の shared config 置き場（R0 現状空、R1 で tsconfig 投入）→ [packages/config/README.md](../packages/config/README.md) | — |
 | `infra/` | Terraform（AWS） | HCL |
 | `docs/requirements/` | 要件定義書（時系列 5 バケット：1-vision / 2-foundation / 3-cross-cutting / 4-features / 5-roadmap） | Markdown |
 | `docs/adr/` | Architecture Decision Records | Markdown |
@@ -221,7 +221,7 @@ GitHub OAuth のみ。ローカルでは GitHub OAuth App を別途作成し、`
 - **YAGNI**：使うか分からない抽象化を先取りで作らない
 - **拡張容易性は構造的に確保**：認証プロバイダ・LLM プロバイダ・サンドボックスランタイムは差し替え可能に
 - **規模に応じた選定**：このプロジェクト規模（小〜中）に最適なツールを選ぶ。Bazel・Kafka・Nx 等の "本格派" は不採用
-- **設計判断を ADR で記録**：「なぜそう決めたか」「他案は何だったか」を Append-only で残す（→ [docs/adr/](../docs/adr/)）
+- **設計判断を ADR で記録**：「なぜそう決めたか」「他案は何だったか」を残す。判断が変わった時は ADR 本文を**直接書き換えて**最新状態に保つ（履歴は git log で辿れる）（→ [docs/adr/](../docs/adr/)）
 
 ### 言語・ツール非依存の規約
 

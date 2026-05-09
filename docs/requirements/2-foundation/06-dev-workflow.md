@@ -19,7 +19,6 @@
 ## コード品質ツール
 
 - **Biome**（lint + format、Rust 製で高速）を TS で書かれた全アプリ・全パッケージで統一使用（→ [ADR 0013](../../adr/0013-biome-for-tooling.md)）
-  - 設定はリポジトリルートの `biome.jsonc` に直接配置（per-workspace 上書きが必要になった時のみ各 workspace に追加して extends する 2 層構造）
   - ESLint + Prettier の組み合わせは不採用
 - **TypeScript（`tsc --noEmit`）** で型チェック（Biome は型チェックを行わないため必須）
 - 補完ツール（**R0 / リポジトリ初期セットアップ時から導入**、→ [ADR 0018](../../adr/0018-phase-0-tooling-discipline.md)）：
@@ -27,10 +26,10 @@
   - **lefthook**：Git フック管理（pre-commit で Biome / 型チェック、commit-msg で commitlint を起動）。壊れたコードが main に入る前に弾く
   - **commitlint**（Conventional Commits）：コミットメッセージ規約の機械的検証。**過去のコミット履歴は遡及修正できない**ため、最初から規約を効かせる必要がある
   - **Knip**：未使用 export / 依存 / ファイルの検出。蓄積後の一斉検出は削除可否の個別判断で時間を消費する
-  - **syncpack**：モノレポ内 `package.json` のバージョン整合性を強制。Turborepo + pnpm workspaces 構成で必須レベル。**バージョンずれは積もると一括修正に動作リスクが伴う**
-  - 設定はすべて `packages/config/` 配下に集約し、各アプリから参照
+  - **syncpack**：モノレポ内 `package.json` のバージョン整合性を強制（→ [ADR 0029](../../adr/0029-syncpack-package-json-consistency.md)）。Turborepo + pnpm workspaces 構成で必須レベル。**バージョンずれは積もると一括修正に動作リスクが伴う**
 - **Go**：`gofmt` + `golangci-lint`（→ [ADR 0020](../../adr/0020-go-code-quality.md)）
 - **Python（R7）**：`ruff`（Linter + Formatter 統合）。型チェッカーは Phase 7 着手時に決定（→ [ADR 0021](../../adr/0021-python-code-quality.md)）
+- **設定ファイルの物理配置**：Layer 1（ルート直接配置）/ Layer 2（`packages/config/` 経由）の住人・判断基準・投入タイミングは [packages/config/README.md](../../../packages/config/README.md) に集約
 
 ---
 
