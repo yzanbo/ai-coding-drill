@@ -155,6 +155,8 @@ pnpm test                # 全テスト実行
 pnpm lint                # Biome チェック（lint + format 差分を検出）
 pnpm lint:fix            # Biome 自動修正（フォーマット差分・修正可能な lint エラーを書き込み）
 pnpm typecheck           # tsc --noEmit（型チェック）
+pnpm knip                # 未使用 export / file / dependency を検出（CI と同じ規約）
+pnpm knip:fix            # Knip 自動削除可能なものを反映（手動レビュー前提）
 ```
 
 ### Git 作業の補助

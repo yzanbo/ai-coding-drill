@@ -31,9 +31,9 @@
 **補完ツール（Knip / lefthook / commitlint / syncpack）を R0（リポジトリ初期セットアップ時）から導入する。**
 
 - 設定の物理配置：本 ADR で扱う補完ツール（Knip / lefthook / commitlint / syncpack）はすべてリポジトリルート直接配置。詳細な配置方針は [packages/config/README.md](../../packages/config/README.md) を参照
-- lefthook の pre-commit フックで Biome / 型チェックを起動
-- lefthook の commit-msg フックで commitlint を起動
-- Knip / syncpack は CI（GitHub Actions）でも実行し、PR レベルで違反を弾く
+- **lefthook と CI で多層防御**：lefthook を `--no-verify` で skip された場合も CI が最終 gate になる
+- フック × チェック × CI の対応表（どのツールがどのフック・どの CI ジョブで動くか）の SSoT は要件定義書側 [06-dev-workflow.md: フック × チェック × CI 対応表](../requirements/2-foundation/06-dev-workflow.md#フック--チェック--ci-対応表) に集約。本 ADR は採用根拠を扱い、運用上の対応関係はそちらを参照
+- 自動修正系（`syncpack fix` / `knip --fix`）は pre-commit に接続せず、`pnpm syncpack:fix` / `pnpm knip:fix` を開発者が手動実行する半自動運用（破壊的変更の混入を防ぐため）
 - 導入が遅れる場合でも **R1 完了時点までには必ず全ツールを稼働状態にする**
 
 ## Why（採用理由）
