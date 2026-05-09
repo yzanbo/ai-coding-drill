@@ -285,6 +285,30 @@ jobs:
         run: pnpm exec syncpack lint
 
   # ====================================================================
+  # job 5: knip
+  #   未使用 export / 未使用ファイル / 未使用 dependency を検出。
+  #   規約 SSoT は knip.config.ts。違反があれば exit 1 となり CI が失敗する。
+  #   詳細: ADR 0021（補完ツールを R0 から導入）
+  # ====================================================================
+  knip:
+    name: knip
+    runs-on: ubuntu-latest
+    steps:
+      # ソース取得。
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # 環境セットアップを Composite Action に委譲。
+      - uses: ./.github/actions/setup-node-pnpm
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          pnpm-version: ${{ env.PNPM_VERSION }}
+
+      # knip: knip.config.ts に従って未使用 export / file / dependency を検出。
+      # 修正は `pnpm knip:fix` をローカルで実行（自動修正は手動レビュー前提）。
+      - name: knip
+        run: pnpm knip
+
+  # ====================================================================
   # 【集約ジョブ】ci-success （umbrella / aggregator）
   #   ※ 上記の job 1〜N とは性質が異なるため番号を付けない。
   #   上記すべてのジョブの成否を集約する。
@@ -303,7 +327,7 @@ jobs:
     # 逆に「成功扱い」と誤認される事故の温床になる。always() で必ず起動させ、
     # 結果は steps 内で明示的に判定する。
     if: always()
-    needs: [commitlint, lint, typecheck, syncpack]
+    needs: [commitlint, lint, typecheck, syncpack, knip]
     runs-on: ubuntu-latest
     steps:
       # needs.*.result は 'success' / 'failure' / 'cancelled' / 'skipped' のいずれか。

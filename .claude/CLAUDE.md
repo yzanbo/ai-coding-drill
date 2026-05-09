@@ -59,6 +59,7 @@ pnpm test                 # 全テスト実行
 pnpm lint                 # Biome チェック
 pnpm format               # Biome フォーマット
 pnpm typecheck            # tsc --noEmit
+pnpm knip                 # 未使用 export / file / dependency を検出
 pnpm g-clean              # マージ済みでリモートが消えたローカルブランチを掃除（必要なら main へ切替・最新化）
 ```
 
@@ -114,8 +115,8 @@ GitHub OAuth のみ。ローカルでは GitHub OAuth App を別途作成し、`
 ### Git 操作の禁止
 
 - main で直接作業しない（必ず別ブランチを切る）
-- 明示指示なしに push・PR 作成しない
-- 勝手に `git add` しない（ステージ済みファイルのみコミット）
+- 明示指示なしに **`git add` / `git commit` / `git push` / PR 作成** を行わない（4 操作いずれもユーザの明示指示が必須）
+- 「コミットして」と明示指示された場合でも、対象は**既にステージされているファイルのみ**。未ステージ変更の自動 `git add` は行わない
 
 ### ブランチ運用
 

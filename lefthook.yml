@@ -46,6 +46,26 @@ pre-commit:
       glob: "package.json"
       run: pnpm exec syncpack lint
 
+    knip:
+      # 未使用 export / file / dependency を検出。規約 SSoT は knip.config.ts。
+      # 根拠：ADR 0021（補完ツールを R0 から導入）。
+      #
+      # glob: TS/JS 系または package.json が staged の時だけ走る（syncpack と同パターン）。
+      #   - 開発者がドキュメント（.md）だけ編集した時には走らず、commit がスムーズ
+      #   - コード追加・削除や依存変更などの「未使用 export / dep を入れる瞬間」に限り即時検知
+      #
+      # Knip はファイル単位起動ができない（全プロジェクトの import グラフ解析が必要）ため、
+      # {staged_files} を渡さず `pnpm knip` で全体スキャンする。
+      # glob トリガー条件下では起動頻度が抑制されるため許容コスト（5〜15 秒）。
+      #
+      # 自動修正 (--fix) は走らせない：
+      #   - 削除可否は人間レビューが必要（未公開機能の足跡 vs dead code の判別）
+      #   - 修正は `pnpm knip:fix` を開発者が手動実行する半自動運用
+      #
+      # 注：CI 側にも独立した `knip` ジョブがあり、pre-commit を skip された場合の最終 gate になる。
+      glob: "*.{ts,tsx,js,jsx,mjs,cjs,json}"
+      run: pnpm exec knip
+
 commit-msg:
   commands:
     commitlint:
