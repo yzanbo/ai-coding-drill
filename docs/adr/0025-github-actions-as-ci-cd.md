@@ -87,7 +87,7 @@ CI/CD ツールは大きく以下の三類型に分かれる：
 ## References
 
 - [ADR 0002](./0002-aws-single-cloud.md)：AWS 単独クラウドの前提
-- [ADR 0021](./0021-phase-0-tooling-discipline.md)：補完ツールを R0 から導入
+- [ADR 0021](./0021-r0-tooling-discipline.md)：補完ツールを R0 から導入
 - [ADR 0026](./0026-github-actions-incremental-scope.md)：CI スコープの段階拡張方針（本 ADR の前提）
 - [.github/workflows/ci.yml](../../.github/workflows/ci.yml)：本 ADR の実装
 - [GitHub Actions の料金体系](https://docs.github.com/ja/billing/managing-billing-for-your-products/managing-billing-for-github-actions/about-billing-for-github-actions)

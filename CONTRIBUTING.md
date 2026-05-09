@@ -216,7 +216,7 @@ pnpm sandbox:build       # 採点用コンテナイメージビルド
   - リリースはタグ（`v0.1.0` 等）で管理、リリースブランチは作らない
 - **コミット**：意味のある単位で commit
   - メッセージは日本語または英語、Conventional Commits 形式（`docs:`, `feat:`, `fix:`, `chore:` 等）
-  - commitlint で機械的に検証（[ADR 0021](docs/adr/0021-phase-0-tooling-discipline.md)）
+  - commitlint で機械的に検証（[ADR 0021](docs/adr/0021-r0-tooling-discipline.md)）
 - **Git フック（lefthook）**：`pnpm install` 時に `prepare` script で自動セットアップ
   - **pre-commit**：ステージ済み TS/JS/JSON 系ファイルに Biome を実行、フォーマット差分は自動修正・再ステージ。lint エラー（自動修正不可）はコミットをブロック
   - **commit-msg**：commitlint がコミットメッセージ規約を検証

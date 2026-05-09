@@ -21,7 +21,7 @@
 - **Biome**（lint + format、Rust 製で高速）を TS で書かれた全アプリ・全パッケージで統一使用（→ [ADR 0018](../../adr/0018-biome-for-tooling.md)）
   - ESLint + Prettier の組み合わせは不採用
 - **TypeScript（`tsc --noEmit`）** で型チェック（Biome は型チェックを行わないため必須）
-- 補完ツール（**R0 / リポジトリ初期セットアップ時から導入**、→ [ADR 0021](../../adr/0021-phase-0-tooling-discipline.md)）：
+- 補完ツール（**R0 / リポジトリ初期セットアップ時から導入**、→ [ADR 0021](../../adr/0021-r0-tooling-discipline.md)）：
   - **共通の根拠**：これらのツールは**途中導入のコストが線形的に膨張**する（蓄積したコードが規約違反だらけになり、後追いで全件修正する作業が発生する）。R0 で入れれば修正対象がほぼゼロ、R4 まで放置すると数百ファイル規模の整地 PR が必要になりレビュー不能。**初期導入が圧倒的に低コスト**
   - **lefthook**：Git フック管理（pre-commit で Biome / 型チェック、commit-msg で commitlint を起動）。壊れたコードが main に入る前に弾く
   - **commitlint**（Conventional Commits）：コミットメッセージ規約の機械的検証。**過去のコミット履歴は遡及修正できない**ため、最初から規約を効かせる必要がある
@@ -70,4 +70,4 @@
 - [ADR 0019: Go のコード品質ツール](../../adr/0019-go-code-quality.md)
 - [ADR 0020: Python のコード品質ツール](../../adr/0020-python-code-quality.md)
 - [ADR 0006: JSON Schema を SSoT に](../../adr/0006-json-schema-as-single-source-of-truth.md)
-- [ADR 0021: 補完ツールを R0 から導入](../../adr/0021-phase-0-tooling-discipline.md)
+- [ADR 0021: 補完ツールを R0 から導入](../../adr/0021-r0-tooling-discipline.md)

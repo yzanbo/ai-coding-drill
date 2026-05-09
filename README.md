@@ -136,7 +136,7 @@
 | [0023](docs/adr/0023-turborepo-pnpm-monorepo.md) | Turborepo + pnpm workspaces | モノレポ運用 |
 | [0018](docs/adr/0018-biome-for-tooling.md) | TS のコード品質ツールに Biome を採用、設定はルート直接配置 | Rust 製 / 高速 / 単一設定 |
 | [0006](docs/adr/0006-json-schema-as-single-source-of-truth.md) | JSON Schema を SSoT に | 3 言語型自動生成 |
-| [0021](docs/adr/0021-phase-0-tooling-discipline.md) | 補完ツールを R0 から導入 | Knip / lefthook / commitlint / syncpack |
+| [0021](docs/adr/0021-r0-tooling-discipline.md) | 補完ツールを R0 から導入 | Knip / lefthook / commitlint / syncpack |
 | [0001](docs/adr/0001-requirements-as-5-buckets.md) | 要件定義書を 5 バケット時系列構造に再編 | ドキュメント設計 / SSoT / 読む順序 vs 書く順序 |
 | [0019](docs/adr/0019-go-code-quality.md) | Go のコード品質ツール（gofmt + golangci-lint） | Go 標準 / メタリンター |
 | [0020](docs/adr/0020-python-code-quality.md) | Python のコード品質ツール（ruff、型チェッカーは R7 着手時決定） | Astral 統合 / 可逆な判断の遅延 |
@@ -251,7 +251,7 @@
 - **可逆な判断は遅延させる**：LLM モデル選定・Python 型チェッカー選定など、市場が変化する領域は実装着手時に決定
 - **過剰設計を避ける**：使うか分からない抽象化を先取りで作らない（YAGNI）
 - **ただし拡張容易性は構造的に確保**：認証プロバイダ・LLM プロバイダ・サンドボックスランタイムは差し替え可能に
-- **遅延の不可逆性が高い判断には YAGNI を適用しない**：プロセス境界トレース連携や補完ツールは R0 から導入（[ADR 0010](docs/adr/0010-w3c-trace-context-in-job-payload.md) / [ADR 0021](docs/adr/0021-phase-0-tooling-discipline.md)）
+- **遅延の不可逆性が高い判断には YAGNI を適用しない**：プロセス境界トレース連携や補完ツールは R0 から導入（[ADR 0010](docs/adr/0010-w3c-trace-context-in-job-payload.md) / [ADR 0021](docs/adr/0021-r0-tooling-discipline.md)）
 - **規模に応じた選定**：このプロジェクト規模（小〜中）に最適なツールを選ぶ。Bazel・Kafka・Nx 等の "本格派" は不採用
 - **設計判断を ADR で記録**：「なぜそう決めたか」「他案は何だったか」を残す（判断更新時は ADR 本文を直接書き換え、変更経緯は git log で辿る）
 

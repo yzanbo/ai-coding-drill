@@ -58,7 +58,7 @@ R0 現状はまだ消費者（`apps/*`）が存在しないため、本パッケ
 
 - 標準的な Layer 2 住人である **tsconfig は消費者（`apps/*`）が R0 時点で存在しない**ため、未投入
 - **Vitest は R2 以降の導入予定**のため、未投入
-- 「**ハコだけ先に置けば、消費者が現れた時に追加するだけで済む**」という設計（[ADR 0021](../../docs/adr/0021-phase-0-tooling-discipline.md) の系譜）
+- 「**ハコだけ先に置けば、消費者が現れた時に追加するだけで済む**」という設計（[ADR 0021](../../docs/adr/0021-r0-tooling-discipline.md) の系譜）
 
 R1 で `apps/*` が追加されたタイミングで `tsconfig/base.json` を投入するのが第一歩。
 
@@ -204,7 +204,7 @@ R1 で `apps/*` が追加されたタイミングで `tsconfig/base.json` を投
 
 - [ADR 0018: Biome を採用](../../docs/adr/0018-biome-for-tooling.md)：「ルート直接配置 / 必要時 packages/config に切り出す **2 層構造**」を定めた本パッケージの根拠
 - [ADR 0023: Turborepo + pnpm workspaces](../../docs/adr/0023-turborepo-pnpm-monorepo.md)：モノレポ構造（本パッケージの位置づけの基盤）
-- [ADR 0021: 補完ツールを R0 から導入](../../docs/adr/0021-phase-0-tooling-discipline.md)：「ハコだけ先に置く」設計の系譜
+- [ADR 0021: 補完ツールを R0 から導入](../../docs/adr/0021-r0-tooling-discipline.md)：「ハコだけ先に置く」設計の系譜
 - [ADR 0022: 設定ファイル形式の選定方針](../../docs/adr/0022-config-file-format-priority.md)：TS > JSONC > YAML の優先順位（切り出し時の選定基準）
 - [ADR 0024: syncpack で package.json 整合性を機械強制](../../docs/adr/0024-syncpack-package-json-consistency.md)：`workspace:*` プロトコル強制
 - [docs/requirements/2-foundation/06-dev-workflow.md](../../docs/requirements/2-foundation/06-dev-workflow.md)：開発フロー全体での本パッケージの位置づけ

@@ -128,5 +128,5 @@ docs/requirements/
 - [docs/requirements/1-vision/README.md](../requirements/1-vision/README.md) — 各バケット README の例
 - [.claude/rules/requirements-docs.md](../../.claude/rules/requirements-docs.md) — 編集ルール（重複禁止・守備範囲遵守・SSoT 原則）
 - [ADR 0010: W3C Trace Context をジョブペイロードに埋め込む](./0010-w3c-trace-context-in-job-payload.md) — 「遅延の不可逆性が高い判断」シリーズ
-- [ADR 0021: 補完ツールを R0 から導入](./0021-phase-0-tooling-discipline.md) — 同上、メタ方針の確立
+- [ADR 0021: 補完ツールを R0 から導入](./0021-r0-tooling-discipline.md) — 同上、メタ方針の確立
 - [Architectural Decision Records: Best Practices](https://adr.github.io/) — ADR の基本方針

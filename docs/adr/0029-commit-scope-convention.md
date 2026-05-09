@@ -6,7 +6,7 @@
 
 ## Context（背景・課題）
 
-このリポジトリは Conventional Commits（`type(scope): subject` 形式）を採用し、commitlint で機械強制している（[ADR 0021](./0021-phase-0-tooling-discipline.md)）。
+このリポジトリは Conventional Commits（`type(scope): subject` 形式）を採用し、commitlint で機械強制している（[ADR 0021](./0021-r0-tooling-discipline.md)）。
 モノレポ構成上、`scope` を「変更が及んだ領域」を示す識別子として運用する必要があるが、設計時に以下の論点が出た：
 
 1. **scope の選択肢を自由記述にするか、列挙にするか**
@@ -128,6 +128,6 @@
 - [commitlint.config.ts](../../commitlint.config.ts)：本 ADR の機械強制実装（SSoT）
 - [.claude/CLAUDE.md](../../.claude/CLAUDE.md)：人間向け scope 表（副 SSoT）
 - [.github/dependabot.yml](../../.github/dependabot.yml)：自動 PR が `include: scope` で `deps` / `deps-dev` を生成する設定
-- [ADR 0021](./0021-phase-0-tooling-discipline.md)：commitlint を R0 から導入
+- [ADR 0021](./0021-r0-tooling-discipline.md)：commitlint を R0 から導入
 - [ADR 0028](./0028-dependabot-auto-update-policy.md)：Dependabot ポリシー（本 ADR の `deps` / `deps-dev` 追加の動機）
 - [Conventional Commits 公式](https://www.conventionalcommits.org/)：scope の自由度に関する基準

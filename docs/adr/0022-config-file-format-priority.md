@@ -246,5 +246,5 @@ ecosystem 慣習に逆らう労力 vs 拡張子変更の利点を比較すると
 - [.claude/CLAUDE.md](../../.claude/CLAUDE.md)：本方針の運用ガイド（簡潔版）
 - [docs/requirements/2-foundation/06-dev-workflow.md](../requirements/2-foundation/06-dev-workflow.md)：開発フロー・品質保証技術の俯瞰
 - [ADR 0018: Biome を採用](./0018-biome-for-tooling.md)：JSONC を採用した先例
-- [ADR 0021: 補完ツールを R0 から導入](./0021-phase-0-tooling-discipline.md)：個別ツール導入の方針
+- [ADR 0021: 補完ツールを R0 から導入](./0021-r0-tooling-discipline.md)：個別ツール導入の方針
 - `commitlint.config.ts`：本 ADR の方針が適用された具体例（本 PR で `.mjs` から変換）

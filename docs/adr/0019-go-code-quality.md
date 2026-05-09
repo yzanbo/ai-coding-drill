@@ -77,7 +77,7 @@
 - [ADR 0018: TypeScript のコード品質ツール](./0018-biome-for-tooling.md)
 - [ADR 0020: Python のコード品質ツール](./0020-python-code-quality.md)
 - [ADR 0016: 採点ワーカーを Go で実装](./0016-go-for-grading-worker.md)
-- [ADR 0021: R0 ツール導入規律](./0021-phase-0-tooling-discipline.md)
+- [ADR 0021: R0 ツール導入規律](./0021-r0-tooling-discipline.md)
 - [golangci-lint 公式](https://golangci-lint.run/)
 - [gofmt 公式](https://pkg.go.dev/cmd/gofmt)
 - [govulncheck 公式](https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck)
