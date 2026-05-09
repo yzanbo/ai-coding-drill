@@ -304,7 +304,7 @@ flowchart LR
 
 | コンポーネント | 配置 | 採用理由 |
 |---|---|---|
-| Frontend | Vercel（エッジ CDN） | Next.js とのファーストパーティ統合、無料枠、SSR + 静的配信のグローバル分散 |
+| Frontend | Vercel（エッジ CDN） | Next.js とのファーストパーティ統合、無料枠、SSR + 静的配信のグローバル分散（→ [ADR 0032](../../adr/0032-vercel-for-frontend-hosting.md)） |
 | Backend API | ECS Fargate（マネージドコンテナ） | 軽量・水平スケール、Docker 操作不要、最小タスク 1 で cold start 回避 |
 | 採点ワーカー | EC2 専用 VM | **Docker Engine が必要**、`docker.sock` 操作権限を API から分離（最小権限原則） |
 | DB（兼ジョブキュー） | RDS PostgreSQL | 永続化、バックアップ、PITR、無料枠活用 |

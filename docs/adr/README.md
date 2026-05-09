@@ -10,7 +10,7 @@
 
 ---
 
-## 📚 カテゴリ別索引（31 件）
+## 📚 カテゴリ別索引（32 件）
 
 採用担当者・面接官の方は、興味のある観点から該当 ADR を探せます。
 
@@ -40,7 +40,7 @@
 | [0015](./0015-github-oauth-with-extensible-design.md) | 認証は GitHub OAuth のみ実装、ただし複数プロバイダへ拡張可能な設計 | Strategy パターン / users + auth_providers |
 | [0016](./0016-drizzle-orm-over-prisma.md) | ORM に Drizzle を採用（Prisma 不採用） | 型推論 / 生 SQL 親和性 / コールドスタート |
 
-### ☁️ インフラ判断（2 件）
+### ☁️ インフラ判断（3 件）
 
 クラウド・ホスティング・インフラ運用に関わる判断。
 
@@ -48,6 +48,7 @@
 |---|---|---|
 | [0002](./0002-aws-single-cloud.md) | AWS 単独クラウド（マルチクラウド不採用） | エコシステム集中 / 複雑度回避 |
 | [0007](./0007-upstash-redis-over-elasticache.md) | Upstash Redis 採用（ElastiCache 不採用） | サーバレス / 無料枠 / コスト効率 |
+| [0032](./0032-vercel-for-frontend-hosting.md) | Frontend ホスティングに Vercel を採用（AWS Amplify / S3+CloudFront 不採用） | Next.js ファーストパーティ統合 / 無料枠 / AWS 単独方針からの 2 例目の例外 |
 
 ### 📋 開発規律判断（9 件）
 
@@ -77,7 +78,7 @@
 
 ## 📝 連番一覧（時系列）
 
-書かれた順序で全 31 件を一覧する場合：
+書かれた順序で全 32 件を一覧する場合：
 
 | # | タイトル | カテゴリ |
 |---|---|---|
@@ -112,6 +113,7 @@
 | [0029](./0029-syncpack-package-json-consistency.md) | モノレポ内 package.json の整合性を syncpack で機械強制 | 📋 開発規律 |
 | [0030](./0030-ci-success-umbrella-job.md) | CI Required status checks を集約ジョブ ci-success で 1 本化 | 📋 開発規律 |
 | [0031](./0031-github-repository-settings.md) | GitHub リポジトリ設定の方針（Ruleset / マージ動作 / Actions / Security / Features） | 📋 開発規律 |
+| [0032](./0032-vercel-for-frontend-hosting.md) | Frontend ホスティングに Vercel を採用 | ☁️ インフラ |
 
 ---
 
@@ -126,7 +128,7 @@
 | **R2** 品質保証パイプライン | [0009](./0009-custom-llm-judge.md) / [0011](./0011-llm-provider-abstraction.md) |
 | **R3** サンドボックス強化 | [0008](./0008-disposable-sandbox-container.md) |
 | **R4** 観測性 | [0017](./0017-w3c-trace-context-in-job-payload.md) |
-| **R5** 仕上げ・公開 | [0002](./0002-aws-single-cloud.md) / [0007](./0007-upstash-redis-over-elasticache.md) |
+| **R5** 仕上げ・公開 | [0002](./0002-aws-single-cloud.md) / [0007](./0007-upstash-redis-over-elasticache.md) / [0032](./0032-vercel-for-frontend-hosting.md) |
 | **R7** Python 分析パイプライン | [0010](./0010-phased-language-introduction.md) / [0021](./0021-python-code-quality.md) |
 
 ---

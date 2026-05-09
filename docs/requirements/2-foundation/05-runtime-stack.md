@@ -164,7 +164,7 @@
 
 | コンポーネント | サービス | 備考 |
 |---|---|---|
-| Frontend | Vercel | Next.js とのファーストパーティ統合、無料枠 |
+| Frontend | Vercel | Next.js とのファーストパーティ統合、無料枠（→ [ADR 0032](../../adr/0032-vercel-for-frontend-hosting.md)） |
 | Backend API | ECS Fargate（最小タスク 1） | cold start 回避 |
 | 採点ワーカー | EC2 t4g.small | Docker Engine + Go バイナリ。gVisor/Firecracker 拡張のため |
 | DB（兼ジョブキュー） | RDS PostgreSQL（db.t4g.micro） | 無料枠活用 |
