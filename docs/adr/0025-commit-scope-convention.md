@@ -38,7 +38,7 @@
 | `api` | `apps/api`（NestJS API） |
 | `worker` | `apps/grading-worker`（Go 採点ワーカー） |
 | `shared` | `packages/shared-types`、`packages/prompts` 等の共有パッケージ |
-| `config` | `packages/config`（Biome / tsconfig 等の共有設定）+ ルート設定ファイル |
+| `config` | tooling 設定ファイル群（ルート直接配置 + `packages/config/` の両方を含む、→ [packages/config/README.md](../../packages/config/README.md)） |
 | `infra` | `infra/`（Terraform） |
 | `docs` | `docs/`（要件定義 / ADR） |
 | `db` | Drizzle スキーマ・マイグレーション |
@@ -74,7 +74,7 @@
 
 - **モノレポの物理ディレクトリと一対一対応**：`apps/*` / `packages/*` / `infra/` / `docs/` の各ディレクトリが scope に対応する
 - **`db` だけは物理ディレクトリでなく論理領域**：Drizzle スキーマ・マイグレーションは `apps/api` 配下にあるが、DB スキーマ変更は影響範囲が API 単独でないため独立 scope を割り当てる（マイグレーションを伴う変更を後で `git log` で抽出しやすい）
-- **`config` はルート設定ファイル群も含む**：`commitlint.config.mjs` / `biome.json` / `pnpm-workspace.yaml` 等のルート設定変更も `config` を使う
+- **`config` はルート直接配置の tooling 設定群と `packages/config/` の両方を含む**：配置方針の詳細は [packages/config/README.md](../../packages/config/README.md) 参照。両方とも `config` scope を使う
 
 ### 自動更新 scope を分離して 2 種追加する理由
 

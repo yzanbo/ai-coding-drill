@@ -1,9 +1,10 @@
 # @ai-coding-drill/config
 
-**ルート直接配置の設定が `extends` で 2 層化を必要とした時のための切り出し先**。
-現状はすべての設定がリポジトリルートで管理されており、本パッケージは**予約状態で空**。
+**多消費者前提の shared config（tsconfig / Vitest 等）を集約する場所**。各 workspace が同じ base を `extends` / `import` する形で参照する。
 
-設計判断の根拠：[ADR 0013](../../docs/adr/0013-biome-for-tooling.md) 「設定はリポジトリルートに直接配置、per-workspace 上書きが必要になった時のみ各 workspace に追加して extends する **2 層構造**」
+R0 現状はまだ消費者（`apps/*`）が存在しないため、本パッケージは `package.json` のみ・**設定ファイルは未投入**。R1 で apps を追加する際に `tsconfig/base.json` 等を投入する。
+
+設計判断の根拠：[ADR 0013](../../docs/adr/0013-biome-for-tooling.md)「`packages/config/` の責務は**多消費者前提の shared config（tsconfig）専用**に絞る。Biome 等の単一インスタンスで完結するツールはルート直接配置とする」
 
 - パッケージ名：`@ai-coding-drill/config`
 - npm 公開しない（`"private": true`）
@@ -15,26 +16,39 @@
 
 このプロジェクトは設定ファイルを **2 層構造** で管理する：
 
-| 層 | 場所 | 状態 | 適用範囲 |
-|---|---|---|---|
-| **Layer 1（プライマリ）** | リポジトリルート直接配置 | **現状すべての設定がここ** | 全 workspace 一律 |
-| **Layer 2（エスケープハッチ）** | **本パッケージ `packages/config/`** | **現状空（予約状態）** | per-workspace 上書きが必要になった時のみ |
+| 層 | 場所 | 性質 |
+|---|---|---|
+| **Layer 1（ルート直接配置）** | リポジトリルート | 単一インスタンスで完結する設定（全 workspace 一律のルール） |
+| **Layer 2（`packages/config/`）** | 本パッケージ | **複数 workspace が同じ base を継承する**設定 |
 
-### 現状の Layer 1（参考）
+各ツールの性質に応じて配置先が決まる。ツールごとの分類は次の通り：
 
-ルート直接配置で運用されている設定群（本パッケージとは別の場所）：
+### Layer 2（本パッケージ）の標準的な住人
 
-| ファイル | ツール |
-|---|---|
-| `biome.jsonc` | Biome（lint + format） |
-| `commitlint.config.ts` | commitlint（コミットメッセージ規約） |
-| `lefthook.yml` | lefthook（Git フック管理） |
-| `tsconfig.json` | TypeScript（root TS 設定型チェック専用） |
-| `turbo.jsonc` | Turborepo（タスク並列実行・キャッシュ） |
-| `.syncpackrc.ts` | syncpack（package.json 整合性） |
-| `pnpm-workspace.yaml` | pnpm Workspaces |
+性質上**多消費者前提**のツール。R1 以降で消費者（apps）が現れた時点で本パッケージに投入する：
 
-これらは現状ルート 1 ファイルで全 workspace 共通のルールを表現できているため、Layer 2 への切り出しは未発生。
+| ツール | 投入時期 | 理由 |
+|---|---|---|
+| **tsconfig** | R1（apps 着手時） | 各 workspace が `jsx` / `module` / `paths` 等を個別設定する一方で `strict` / `target` / `lib` 等の base は共通。**構造上ほぼ確実に多消費者になる** |
+| **Vitest** | R2 以降（テスト導入時） | 各 workspace が test path / env / setup を個別設定する一方で coverage / reporter / global setup は共通。**多消費者になることがほぼ確定** |
+
+これらは「事象トリガーで切り出すか検討」ではなく、消費者が現れた瞬間に Layer 2 に入れるのがデフォルト。
+
+### Layer 1（ルート直接配置）の住人
+
+性質上**単一インスタンスで完結する**ツール。本パッケージには置かない：
+
+| ファイル | ツール | ルート固定の理由 |
+|---|---|---|
+| `biome.jsonc` | Biome | monorepo native（v2 以降）で 1 root config + `overrides` で完結 → [ADR 0013](../../docs/adr/0013-biome-for-tooling.md) |
+| `turbo.jsonc` | Turborepo | モノレポ全体のオーケストレータ、root 固定 |
+| `lefthook.yml` | lefthook | Git フックは repo-global、1 つしか持てない |
+| `commitlint.config.ts` | commitlint | commit 単位の検証、root 固定 |
+| `.syncpackrc.ts` | syncpack | 全 `package.json` を再帰スキャンする横断ツール → [ADR 0029](../../docs/adr/0029-syncpack-package-json-consistency.md) |
+| `tsconfig.json`（ルート） | TypeScript | `tsc --noEmit -p tsconfig.json` のエントリ（中身は将来 `packages/config/tsconfig/base.json` を `extends` する想定） |
+| `pnpm-workspace.yaml` | pnpm | workspace 定義、root 固定 |
+
+これらを本パッケージに移しても、消費者が 1 つしかいないため indirection の便益がなく、二重メンテのコストだけが発生する。
 
 ---
 
@@ -42,32 +56,54 @@
 
 `package.json` のみが存在する**ハコだけの状態**で、設定ファイルは 1 つも入っていない。これは設計通りの状態：
 
-- すべての設定が Layer 1（ルート直接配置）で管理されている
-- per-workspace 上書きが必要になっていないため、本パッケージへの切り出しは未発生
-- 「**ハコだけ先に置けば、必要になった時に追加するだけで済む**」という設計（[ADR 0018](../../docs/adr/0018-phase-0-tooling-discipline.md) の系譜）
+- 標準的な Layer 2 住人である **tsconfig は消費者（`apps/*`）が R0 時点で存在しない**ため、未投入
+- **Vitest は R2 以降の導入予定**のため、未投入
+- 「**ハコだけ先に置けば、消費者が現れた時に追加するだけで済む**」という設計（[ADR 0018](../../docs/adr/0018-phase-0-tooling-discipline.md) の系譜）
 
-`apps/*` が R1 で追加されても、それだけでは本パッケージに何も入らない。**「ルート 1 ファイルで表現しきれない workspace 別上書きが必要」になった瞬間**が切り出しのトリガー。
+R1 で `apps/*` が追加されたタイミングで `tsconfig/base.json` を投入するのが第一歩。
 
 ---
 
-## 切り出しトリガー（タイミングではなく事象で判断）
+## 投入タイミング
 
-以下の事象が発生した時に、Layer 1 → Layer 2 の切り出しを検討する：
+### tsconfig（R1）
 
-| トリガー事象 | 切り出す候補 |
+`apps/web` / `apps/api` を最初に追加した時点で以下を一括投入する：
+
+| ファイル | 用途 |
 |---|---|
-| `apps/web` と `apps/api` で **`compilerOptions` が大きく異なる** tsconfig が必要になった | `tsconfig/base.json` + `tsconfig/nextjs.json` + `tsconfig/nestjs.json` |
-| **`packages/*` 配下のライブラリ向け** tsconfig が必要になった（例：`composite: true`、`declaration: true` 等） | `tsconfig/library.json` |
-| **特定 workspace だけ Biome ルール上書き**が必要になった（例：`apps/web` だけ React 系ルールを緩和） | `biome/base.jsonc`（ルートから共通部分を切り出し） |
-| Vitest を導入し、**複数 workspace で共有テスト設定**が必要になった（R2 以降） | `vitest/base.ts` |
+| `tsconfig/base.json` | 全 TS workspace 共通（`strict` / `target` / `lib` / `moduleResolution` 等） |
+| `tsconfig/nextjs.json` | `apps/web` 用（base + `jsx` + Next 向け） |
+| `tsconfig/nestjs.json` | `apps/api` 用（base + decorator + commonjs） |
+| `tsconfig/library.json` | `packages/*` 用（base + `composite: true` + `declaration: true`） |
+
+各 workspace の `tsconfig.json` は上記のいずれかを `extends` する薄いラッパーになる。ルート `tsconfig.json` も同様に `tsconfig/base.json` を `extends` する想定。
+
+### Vitest（R2 以降）
+
+テストフレームワーク導入時に以下を投入する：
+
+| ファイル | 用途 |
+|---|---|
+| `vitest/base.ts` | 全 TS workspace 共通（coverage / reporter / global setup） |
+
+各 workspace の `vitest.config.ts` は base を import して個別設定（test path / env 等）を上書きする。
+
+### Biome 等の例外的な切り出し（通常は発生しない）
+
+性質上ルート固定のツール（Biome / Turbo / lefthook / commitlint / syncpack 等）も、稀に Layer 2 への切り出しが必要になることがある。判断は事象トリガーで：
+
+| トリガー事象 | 切り出し候補 |
+|---|---|
+| Biome の `overrides` で per-workspace ルール差を表現できなくなった（[ADR 0013](../../docs/adr/0013-biome-for-tooling.md) L99 の「workspace 固有上書きが 3 つ以上」相当） | `biome/base.jsonc`（ルートから base 部分を切り出し、workspace 側は extends） |
 
 **採用しないトリガー**：
 
-- ❌ 「R1 になったら切り出す」のような時間ベース
-- ❌ 「実装着手したら切り出す」のような実装依存
+- ❌ 「R1 / R2 になったから切り出す」のような時間ベース（tsconfig / Vitest 以外には適用しない）
 - ❌ 「将来必要になりそうだから先に切り出す」のような先取り
+- ❌ 「他のツールと統一したいから」のような対称性追求
 
-ルート 1 ファイルで表現できる限りは Layer 1 に留め置き、**事象が発生してから**切り出す。
+ルート 1 ファイルで表現できる限りは Layer 1 に留め置く。
 
 ---
 
