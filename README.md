@@ -3,6 +3,8 @@
 > LLM が自動生成したプログラミング問題を、サンドボックス環境で検証・採点する学習サイト。
 > 「LLM の出力を信用せず、サンドボックスで動作保証する」設計思想を実装したポートフォリオプロジェクト。
 
+> 🐍 **Python 版があります**：[`yzanbo/ai-coding-drill-python`](https://github.com/yzanbo/ai-coding-drill-python) — 同じ設計を Python (FastAPI 等) で実装した姉妹版。本リポジトリの [`v1.0.0-typescript`](https://github.com/yzanbo/ai-coding-drill/releases/tag/v1.0.0-typescript) を分岐起点としてフォーク
+
 🚀 **デモ**：_（デプロイ後に追記予定。R5 完了時に公開）_
 📊 **ステータス**：**設計フェーズ完了 / R1 着手予定**（[ロードマップ](docs/requirements/5-roadmap/01-roadmap.md) 参照）
 📚 **設計判断**：[ADR](docs/adr/) として体系的に記録（最新件数は [索引](docs/adr/README.md) を参照）
