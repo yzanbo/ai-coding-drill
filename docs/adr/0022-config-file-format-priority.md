@@ -33,7 +33,7 @@
 
 **設定ファイルの形式選定は「ツール強制 → ecosystem 慣習 → 自由選択時 TS > JSONC > JS > YAML > JSON」の優先順位で決め、コメントを書ける形式を書けない形式より常に優先する。**
 
-**運用詳細（前提原則 / 優先順位の Tier 表 / JSONC として扱われる `.json` 例外リスト / 適用フローチャート）の SSoT は [06-dev-workflow.md: 設定ファイル形式の優先順位](../requirements/2-foundation/06-dev-workflow.md#設定ファイル形式の優先順位) を参照**（運用ルール型 ADR、→ [`.claude/rules/adr-and-docs-ssot.md` §2](../../.claude/rules/adr-and-docs-ssot.md)）。本 ADR は採用根拠（§Why）と代替案（§Alternatives Considered）を扱う。
+**運用詳細（前提原則 / 優先順位の Tier 表 / JSONC として扱われる `.json` 例外リスト / 適用フローチャート）の SSoT は [06-dev-workflow.md: 設定ファイル形式の優先順位](../requirements/2-foundation/06-dev-workflow.md#設定ファイル形式の優先順位) を参照**（運用ルール型 ADR、→ [`.claude/rules/docs-rules.md` §2](../../.claude/rules/docs-rules.md)）。本 ADR は採用根拠（§Why）と代替案（§Alternatives Considered）を扱う。
 
 ### 本 ADR の即時適用：`commitlint.config.mjs` → `commitlint.config.ts`（適用済み）
 

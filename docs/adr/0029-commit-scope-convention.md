@@ -30,7 +30,7 @@
 
 **scope は列挙制とし、領域 scope（web / api / worker / shared / config / infra / docs / db）8 種 + 自動更新 scope（deps / deps-dev）2 種の計 10 種を `commitlint.config.ts` の `scope-enum` で機械強制する。`scope-empty` は許容する**（リポジトリ横断の変更で scope 不要なケースのため）。
 
-**運用詳細（type / scope の完全一覧 / 複数領域跨りの書き方 / scope 追加変更時の手順）の SSoT は [06-dev-workflow.md: コミットメッセージ規約](../requirements/2-foundation/06-dev-workflow.md#コミットメッセージ規約) を参照**（運用ルール型 ADR、→ [`.claude/rules/adr-and-docs-ssot.md` §2](../../.claude/rules/adr-and-docs-ssot.md)）。機械強制 SSoT は [`commitlint.config.ts`](../../commitlint.config.ts)。本 ADR は採用根拠（§Why）と代替案（§Alternatives Considered）を扱う。
+**運用詳細（type / scope の完全一覧 / 複数領域跨りの書き方 / scope 追加変更時の手順）の SSoT は [06-dev-workflow.md: コミットメッセージ規約](../requirements/2-foundation/06-dev-workflow.md#コミットメッセージ規約) を参照**（運用ルール型 ADR、→ [`.claude/rules/docs-rules.md` §2](../../.claude/rules/docs-rules.md)）。機械強制 SSoT は [`commitlint.config.ts`](../../commitlint.config.ts)。本 ADR は採用根拠（§Why）と代替案（§Alternatives Considered）を扱う。
 
 ## Why（採用理由）
 
