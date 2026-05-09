@@ -138,7 +138,7 @@
 | [0021](docs/adr/0021-phase-0-tooling-discipline.md) | 補完ツールを R0 から導入 | Knip / lefthook / commitlint / syncpack |
 | [0001](docs/adr/0001-requirements-as-5-buckets.md) | 要件定義書を 5 バケット時系列構造に再編 | ドキュメント設計 / SSoT / 読む順序 vs 書く順序 |
 | [0019](docs/adr/0019-go-code-quality.md) | Go のコード品質ツール（gofmt + golangci-lint） | Go 標準 / メタリンター |
-| [0020](docs/adr/0020-python-code-quality.md) | Python のコード品質ツール（ruff、型チェッカーは Phase 7 着手時決定） | Astral 統合 / 可逆な判断の遅延 |
+| [0020](docs/adr/0020-python-code-quality.md) | Python のコード品質ツール（ruff、型チェッカーは R7 着手時決定） | Astral 統合 / 可逆な判断の遅延 |
 | [0026](docs/adr/0026-github-actions-incremental-scope.md) | GitHub Actions のスコープを段階的に拡張（R0 は最小） | YAGNI / 段階拡張 / 無料枠節約 |
 | [0025](docs/adr/0025-github-actions-as-ci-cd.md) | CI/CD ツールに GitHub Actions を採用 | コードホスト統合 / OIDC キーレス |
 | [0028](docs/adr/0028-dependabot-auto-update-policy.md) | 依存関係の自動更新ポリシー（Dependabot） | 週次 / メジャー除外 / グループ化 |

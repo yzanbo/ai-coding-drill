@@ -73,7 +73,7 @@
 
 ## References
 
-- [05-runtime-stack.md: コード品質ツール](../requirements/2-foundation/05-runtime-stack.md)
+- [06-dev-workflow.md: コード品質ツール](../requirements/2-foundation/06-dev-workflow.md#コード品質ツール)
 - [ADR 0018: TypeScript のコード品質ツール](./0018-biome-for-tooling.md)
 - [ADR 0020: Python のコード品質ツール](./0020-python-code-quality.md)
 - [ADR 0016: 採点ワーカーを Go で実装](./0016-go-for-grading-worker.md)

@@ -6,9 +6,9 @@
 
 ## Context（背景・課題）
 
-Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関連で導入する予定（→ [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)）。R7 着手時に必要となる Python 側のコード品質ツール（フォーマット・lint・型チェック）を **MVP 段階で方針だけ確定**し、確定が困難な部分は判断時まで遅延させる。
+Python は MVP では使わず、R7の分析パイプライン・RAG 関連で導入する予定（→ [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)）。R7 着手時に必要となる Python 側のコード品質ツール（フォーマット・lint・型チェック）を **MVP 段階で方針だけ確定**し、確定が困難な部分は判断時まで遅延させる。
 
-- Python は R7（R7）以降で利用、MVP では未使用
+- Python は R7以降で利用、MVP では未使用
 - 「3 言語に等価な品質ゲートを設計した」と語れる構成にしたい
 - 2026 年初頭時点で Astral 製エコシステム（ruff / uv / ty）が急速に整備中
 - R7 着手は MVP 完成後のため、確定すべき判断と遅延すべき判断を分離する
@@ -99,7 +99,7 @@ Python は MVP では使わず、R7（R7）の分析パイプライン・RAG 関
 
 ## References
 
-- [05-runtime-stack.md: コード品質ツール](../requirements/2-foundation/05-runtime-stack.md)
+- [06-dev-workflow.md: コード品質ツール](../requirements/2-foundation/06-dev-workflow.md#コード品質ツール)
 - [ADR 0018: TypeScript のコード品質ツール](./0018-biome-for-tooling.md)
 - [ADR 0019: Go のコード品質ツール](./0019-go-code-quality.md)
 - [ADR 0003: 言語の段階導入](./0003-phased-language-introduction.md)
