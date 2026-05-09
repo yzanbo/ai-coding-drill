@@ -26,7 +26,7 @@
 | `apps/grading-worker/` | 採点ワーカー（Postgres ジョブを取得して Docker で実行） | Go |
 | `packages/shared-types/` | JSON Schema を SSoT、TS/Go/Python 向けに型を自動生成 | — |
 | `packages/prompts/` | LLM プロンプト（YAML、バージョン管理） | — |
-| `packages/config/` | 多消費者前提の shared config 置き場 → [packages/config/README.md](../packages/config/README.md) | — |
+| `packages/config/` | 多消費者前提の shared config 置き場（R0 現状空、R1 で tsconfig 投入）→ [packages/config/README.md](../packages/config/README.md) | — |
 | `infra/` | Terraform（AWS） | HCL |
 | `docs/requirements/` | 要件定義書（時系列 5 バケット：1-vision / 2-foundation / 3-cross-cutting / 4-features / 5-roadmap） | Markdown |
 | `docs/adr/` | Architecture Decision Records | Markdown |
