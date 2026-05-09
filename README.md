@@ -97,7 +97,7 @@
 
 ## 📚 設計判断（ADR）索引
 
-複数案を検討して 1 つを選んだ判断は、すべて [docs/adr/](docs/adr/) に **1 ファイル 1 決定 / Append-only** で記録しています。
+複数案を検討して 1 つを選んだ判断は、すべて [docs/adr/](docs/adr/) に **1 ファイル 1 決定**で記録しています。判断が変わった場合は ADR 本文を直接書き換えて最新状態に保ち、変更経緯は git log で辿ります。
 
 ### 🏗️ アーキテクチャ判断
 
@@ -127,6 +127,7 @@
 |---|---|---|
 | [0002](docs/adr/0002-aws-single-cloud.md) | クラウドは AWS 単独 | マルチクラウド不採用 |
 | [0012](docs/adr/0012-upstash-redis-over-elasticache.md) | Upstash Redis 採用 | サーバレス / 無料枠 |
+| [0013](docs/adr/0013-vercel-for-frontend-hosting.md) | Frontend ホスティングに Vercel を採用 | Next.js ファーストパーティ統合 / 無料枠 |
 
 ### 📋 開発規律判断
 
@@ -146,12 +147,12 @@
 | [0027](docs/adr/0027-github-actions-sha-pinning.md) | サードパーティアクションを SHA でピン止め | サプライチェーン攻撃耐性 |
 | [0030](docs/adr/0030-commitlint-base-commit-fetch.md) | commitlint の base コミット取得を iterative deepen 方式で | shallow-exclude 不可 / `--deepen=20` |
 | [0022](docs/adr/0022-config-file-format-priority.md) | 設定ファイル形式の選定方針（TS > JSONC > YAML） | ツール強制 / ecosystem 慣習 |
-| [0024](https://github.com/yzanbo/ai-coding-drill/pull/15) | syncpack によるモノレポ `package.json` 整合性ゲート（**PR #15 マージ予定**） | バージョン揃え / `workspace:*` 強制 |
+| [0024](docs/adr/0024-syncpack-package-json-consistency.md) | syncpack によるモノレポ `package.json` 整合性ゲート | バージョン揃え / `workspace:*` 強制 |
 | [0031](docs/adr/0031-ci-success-umbrella-job.md) | CI Required status checks を集約ジョブ `ci-success` で 1 本化 | umbrella job / `needs.*.result` |
 | [0032](docs/adr/0032-github-repository-settings.md) | GitHub リポジトリ設定の方針（Ruleset / マージ動作 / Actions / Security） | デフォルト変更項目の棚卸し |
 
 → 索引一覧：[docs/adr/README.md](docs/adr/README.md)
-→ ADR 運用ルール：1 決定 1 ファイル / Append-only / 代替案・トレードオフ・将来見直しトリガーを必ず記録
+→ ADR 運用ルール：1 決定 1 ファイル / 判断更新時は本文を直接書き換えて最新状態に保つ（履歴は git log）/ 代替案・トレードオフ・将来見直しトリガーを必ず記録
 
 ---
 
@@ -252,7 +253,7 @@
 - **ただし拡張容易性は構造的に確保**：認証プロバイダ・LLM プロバイダ・サンドボックスランタイムは差し替え可能に
 - **遅延の不可逆性が高い判断には YAGNI を適用しない**：プロセス境界トレース連携や補完ツールは R0 から導入（[ADR 0010](docs/adr/0010-w3c-trace-context-in-job-payload.md) / [ADR 0021](docs/adr/0021-phase-0-tooling-discipline.md)）
 - **規模に応じた選定**：このプロジェクト規模（小〜中）に最適なツールを選ぶ。Bazel・Kafka・Nx 等の "本格派" は不採用
-- **設計判断を ADR で記録**：「なぜそう決めたか」「他案は何だったか」を Append-only で残す
+- **設計判断を ADR で記録**：「なぜそう決めたか」「他案は何だったか」を残す（判断更新時は ADR 本文を直接書き換え、変更経緯は git log で辿る）
 
 ---
 
