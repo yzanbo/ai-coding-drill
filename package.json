@@ -36,7 +36,7 @@
     "@commitlint/types": "^20.5.0",
     "knip": "^6.12.2",
     "lefthook": "^2.1.6",
-    "syncpack": "^15.0.0",
+    "syncpack": "^15.2.0",
     "turbo": "^2.9.9",
     "typescript": "^6.0.3"
   }
